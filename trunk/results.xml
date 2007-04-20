@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Test_results>
+<test class="UnitTest" method="before" name="" status="success">
+<groups/>
+</test>
+<test class="UnitTest" method="login" name="" status="success">
+<groups/>
+</test>
+<test class="UnitTest" method="logout" name="" status="success">
+<groups/>
+</test>
+<test class="UnitTest" method="testOne" name="" status="success">
+<groups>
+<group>inner_tests</group>
+</groups>
+</test>
+<test class="UnitTest" method="testTwo" name="" status="failed">
+<groups>
+<group>inner_tests</group>
+</groups>
+<error>
+<message>Error</message>
+<stack>
+<trace className="UnitTest" fileName="UnitTest.java" lineNumber="43" methodName="testTwo"/>
+<trace className="sun.reflect.NativeMethodAccessorImpl" fileName="NativeMethodAccessorImpl.java" lineNumber="-2" methodName="invoke0"/>
+<trace className="sun.reflect.NativeMethodAccessorImpl" fileName="NativeMethodAccessorImpl.java" lineNumber="39" methodName="invoke"/>
+<trace className="sun.reflect.DelegatingMethodAccessorImpl" fileName="DelegatingMethodAccessorImpl.java" lineNumber="25" methodName="invoke"/>
+<trace className="java.lang.reflect.Method" fileName="Method.java" lineNumber="585" methodName="invoke"/>
+<trace className="org.depunit.TestMethod" fileName="TestMethod.java" lineNumber="313" methodName="callMethod"/>
+<trace className="org.depunit.DepUnit" fileName="DepUnit.java" lineNumber="166" methodName="run"/>
+<trace className="org.depunit.DepUnit" fileName="DepUnit.java" lineNumber="97" methodName="main"/>
+</stack>
+</error>
+</test>
+<test class="UnitTest" method="testThree" name="" status="skipped">
+<groups>
+<group>inner_tests</group>
+</groups>
+</test>
+<test class="UnitTest" method="after" name="" status="success">
+<groups/>
+</test>
+</Test_results>

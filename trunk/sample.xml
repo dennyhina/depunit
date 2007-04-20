@@ -1,0 +1,13 @@
+<test name="" class="" method="" status="">
+	<groups>
+		<group>one</group>
+		<group>two</group>
+	</groups>
+	<error>
+		<message>This is an error</message>
+		<stack>
+			<trace className="" fileName="" methodName="" lineNumber=""/>
+		</stack>
+	</error>
+</test>
+	
