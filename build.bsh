@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2004, Brian Hawkins
+ * Permission is granted to use this code without restriction as long
+ * as this copyright notice appears in all source files.
+ */
+ 
+import cpmake.*;
+
+srcdir = "src";
+blddir = "build";
+jarfile = "depunit.jar";
+extdir = "ext";
+testsrcdir = "test";
+testoutdir = blddir+"/test";
+
+//This script has the JavaCompiler and JarFile class in it.
+make.includeCPMakeScript("java.bsh"); 
+make.setProperty(make.PROP_MULTI_THREAD_OUTPUT, "true");
+
+extJarFiles = make.createFileList(extdir, ".*\\.jar", (make.INCLUDE_PATH | make.RECURSE));
+
+
+jp = new JavaProgram(srcdir, blddir, jarfile, extJarFiles);
+jp.setManifest("manifest.txt");
+jp.createRules();
+jp.setDefaultTarget();
+
+tstclasspath = jp.getClassPath()+File.pathSeparator+testoutdir;
+print(tstclasspath);
+
+make.addSearchPath(srcdir);
+make.addSearchPath(testsrcdir);
+
+//-------------------------------------------------------------------
+//==-- RULE FOR CREATING DIRECTORIES --==
+make.createDirectoryRule("doc", null, true);
+
+//-------------------------------------------------------------------
+//==-- CREATE JAVADOCS --==
+make.createPhonyRule("javadoc", "doc", "javadoc");
+void javadoc(String target, String[] prereqs)
+	{
+	make.exec(srcdir, "javadoc -public -d ../doc "+make.arrayToString(sourceFiles), true);
+	}
+	
+//-------------------------------------------------------------------
+//==-- CREATES RULE FOR COMPILING TEST FILES --==
+JavaCompiler jctest = new JavaCompiler(testsrcdir, testoutdir, tstclasspath);
+testClassFiles = jctest.getClassFiles();
+make.createPatternDependency(testoutdir+".*\\.class", jp.getJarFileTarget());
+
+
+//-------------------------------------------------------------------
+//==-- TEST --==
+make.createPhonyRule("test", testClassFiles, "test");
+void test(String target, String[] prereqs)
+	{
+	print("Running test");
+	//make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -c LoginTest -c LoginTestPart2 -s report.xsl -r build/results.html LoginTestPart2.testThree");
+	//make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -x test.xml -s report.xsl -r build/results.html");
+	make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -x test.xml -r build/results.xml");
+	}	
+
+

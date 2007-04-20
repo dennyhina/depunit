@@ -1,0 +1,70 @@
+<!--
+Needed test cases
+One method loops
+Loop at the beginning
+Loop at the end
+-->
+<suite name="suite name" verbose="1">
+	<classGroup name="login_group">
+		<class name="LoginTest"/>
+		<class name="LoginTestPart2"/>
+	</classGroup>
+	
+	<run name="First Run">
+		<classes>
+			<includeGroup>login_group</includeGroup>
+			
+			<class name="LoginTest">
+				<value name="UserName">Sammy</value>
+				<value name="Password">secret</value>
+				<value name="test">4</value>
+			</class>
+		</classes>
+		
+	</run>
+	
+	<run name="Fail run">
+		<classes>
+			<class name="UnitTest"/>
+		</classes>
+	</run>
+	
+	<run name="Second Run">
+		<classes>
+			<class name="LoginTest">
+				<value name="UserName">MyUserName</value>
+				<value name="Password">mysecret</value>
+			</class>
+		</classes>
+		
+		<tests>
+			<method>LoginTest.login</method>
+		</tests>
+	</run>
+	
+	
+	<run name="Repeat run">
+		<classes>
+			<includeGroup>login_group</includeGroup>
+			
+			<class name="LoginTest">
+				<value name="UserName">Sammy</value>
+				<value name="Password">secret</value>
+				<value name="test">4</value>
+			</class>
+			
+			<class name="LoginTestPart2">
+				<driver>
+					<data>
+						<value name="MyData">Here is my data</value>
+					</data>
+					<data>
+						<value name="MyData">Here is my data2</value>
+					</data>
+				</driver>
+			</class>
+		</classes>
+		
+	</run>
+	
+</suite>
