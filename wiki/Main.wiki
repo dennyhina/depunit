@@ -15,4 +15,4 @@ Another thing that bugs me is parameters on test methods.  Parameters on a test 
 
 There is always some aspect of data in everyones code.  If there were no input data of any kind the code would return the exact same result every time it ran.  If there were no input data to the code it could be written once, ran and then never be tested again, because its output will never change.  All unit tests use some kind of data to test against our code.  Because the variations of data can change drastically, shouldn't our tests be driven by that data.  Ideally the same code should be tested with a range of data to make sure some extreme value does not break the code.
 
-To be data driven DepUnit uses the concept called a TestBean.
+To be data driven DepUnit uses the concept of TestBeans.  The test bean concept lets you set values on an object and then run various tests on those values.
