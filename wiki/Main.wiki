@@ -54,4 +54,4 @@ The test xml file looks like this
 </suite>
 }}}
 
-The above XML will run the tests located in the TestFileImport class twice
+The above XML will run the tests located in the TestFileImport class twice, once for the file "test_file_1" and second for the file "test_file_2".
