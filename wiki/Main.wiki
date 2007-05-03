@@ -36,5 +36,22 @@ public class TestFileImport {
 
 The test xml file looks like this
 {{{
-
+<suite name="test">
+<run name="Repeat run">
+  <classes>
+    <class name="TestFileImport">
+      <driver>
+        <data>
+          <value name="File">test_file_1</value>
+        </data>
+        <data>
+          <value name="File">test_file_2</value>
+        </data>
+      </driver>
+    </class>
+  </classes>
+</run>
+</suite>
 }}}
+
+The above XML will run the tests located in the TestFileImport class twice
