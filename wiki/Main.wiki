@@ -55,3 +55,16 @@ The test xml file looks like this
 }}}
 
 The above XML will run the tests located in the TestFileImport class twice, once for the file "test_file_1" and second for the file "test_file_2".
+
+If you only wanted to run the tests once with one file you can abreviate the xml like this:
+{{{
+<suite name="test">
+<run name="Repeat run">
+  <classes>
+    <class name="TestFileImport">
+      <value name="File">test_file_1</value>
+    </class>
+  </classes>
+</run>
+</suite>
+}}}
