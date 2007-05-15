@@ -347,12 +347,14 @@ public class DepUnit
 			catch (InitializationException ie)
 				{
 				ie.printStackTrace(System.out);
+				tm.setStatus(TestResult.STATUS_FAILED);
 				tr.setStatus(TestResult.STATUS_FAILED);
 				tr.setException(ie);
 				}
 			catch (InvocationTargetException ite)
 				{
 				Throwable t = ite.getCause();
+				tm.setStatus(TestResult.STATUS_FAILED);
 				tr.setStatus(TestResult.STATUS_FAILED);
 				tr.setException(t);
 				System.out.println(tm.printStack(t));

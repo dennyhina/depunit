@@ -18,6 +18,7 @@ public abstract class DepLink implements Observer
 		
 		public Observers(int type)
 			{
+			m_type = type;
 			m_observers = new HashSet<DepLink>();
 			}
 			
