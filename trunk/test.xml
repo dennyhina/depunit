@@ -23,6 +23,12 @@ Loop at the end
 		
 	</run>
 	
+	<run name="Cleanup Run">
+		<classes>
+			<class name="CleanupTest"/>
+		</classes>
+	</run>
+	
 	<run name="Fail run">
 		<classes>
 			<class name="UnitTest"/>

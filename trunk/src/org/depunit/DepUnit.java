@@ -277,24 +277,32 @@ public class DepUnit
 		for (TestMethod tm : targetMethods)
 			m_targetBucket.put(tm.getFullName(), tm);
 			
+		/*
+		The next three steps need to be done seperately so recursive dependencies 
+		are not introduced
+		*/
+			
 		//need to do this first before adding to process queue
 		for (TestMethod tm : m_testMethods)  //Resolve all methods
 			tm.resolveDependencies(m_groupBucket, m_tmBucket);
 			
-		//Create a set of cleanup methods
+		//Prep the cleanup methods
 		for (TestMethod tm : m_testMethods)
-			cleanupSet.addAll(tm.getCleanupMethods());
+			tm.gatherCleanupDependencies(m_tmBucket);
+			
+		//If new deps were added in the last set then this will set Observers
+		for (TestMethod tm : m_testMethods)
+			tm.addCleanupDependencies(m_tmBucket);
 			
 		//Add only specified target methods if they are not cleanup methods
 		for (TestMethod tm : targetMethods)  
 			{
-			if (!cleanupSet.contains(tm.getFullName()))
-				addToProcessQueue(tm);
+			addToProcessQueue(tm);
 			}
 			
 		//Adds cleanup methods to the end of the run
-		while (!m_cleanupStack.empty())
-			addToProcessQueue(m_cleanupStack.pop());
+		/* while (!m_cleanupStack.empty())
+			addToProcessQueue(m_cleanupStack.pop()); */
 			
 		//Now mark all other methods as not_run
 		for (TestMethod tm : m_testMethods)
