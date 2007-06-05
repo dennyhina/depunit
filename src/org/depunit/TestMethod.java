@@ -98,6 +98,7 @@ public class TestMethod extends DepLink
 	private boolean m_processMethod;   //This method represents a before or after processing method
 	private String[] m_groups;         //Groups this method belongs to.
 	private List<String> m_cleanupMethods;    //Methods that must be called if this one succeds
+	private List<String> m_setupMethods;
 	
 	
 	public TestMethod(Method m, TestClass tc, boolean procMethod)
@@ -107,6 +108,7 @@ public class TestMethod extends DepLink
 		m_hdMethods = new ArrayList<String>();
 		m_sdMethods = new ArrayList<String>();
 		m_cleanupMethods = new ArrayList<String>();
+		m_setupMethods = new ArrayList<String>();
 		m_status = null;
 		/* m_hardDependencies = new HardObserver();
 		m_softDependencies = new SoftObserver(); */
@@ -150,11 +152,81 @@ public class TestMethod extends DepLink
 		else
 			{
 			m_depCount ++;
-			reset();
+			if (sc.getDepType() == HARD_DEPENDENCY)
+				reset();
 			}
 		}
 		
 	//---------------------------------------------------------------------------
+	private List<String> getDependents(TestMethod tm)
+		{
+		ArrayList<String> dependents = new ArrayList<String>();
+		
+		Set<DepLink> deps = tm.getHardObservers();
+		for (DepLink dl : deps)
+			{
+			TestMethod innerTm = (TestMethod)dl;
+			if (!innerTm.isProcessMethod() && innerTm != this)
+				{
+				dependents.add(innerTm.getFullName());
+				//System.out.println("  dep: "+innerTm.getFullName());
+				dependents.addAll(getDependents(innerTm));
+				}
+			}
+			
+		deps = tm.getSoftObservers();
+		for (DepLink dl : deps)
+			{
+			TestMethod innerTm = (TestMethod)dl;
+			if (!innerTm.isProcessMethod() && innerTm != this)
+				{
+				dependents.add(innerTm.getFullName());
+				//System.out.println("  dep: "+innerTm.getFullName());
+				dependents.addAll(getDependents(innerTm));
+				}
+			}
+			
+		return (dependents);
+		}
+		
+	//---------------------------------------------------------------------------
+	/**
+		If this method is a cleaup method then it will find all the methods that
+		depend on the setup method.
+	*/
+	public void gatherCleanupDependencies(Map<String, TestMethod> methods)
+		{
+		if (!isProcessMethod()) //Process methods already have thier dependencies setup
+			{
+			ArrayList<String> setupDependents = new ArrayList<String>();
+			
+			for (String setup : m_setupMethods)
+				{
+				//System.out.println("Setup: "+setup);
+				//System.out.println("Cleanup: "+getFullName());
+				setupDependents.addAll(getDependents(methods.get(setup)));
+				}
+				
+			m_sdMethods.addAll(setupDependents);
+			}
+		}
+		
+	//---------------------------------------------------------------------------
+	/**
+		This runs through all the soft dependencies again to make sure the observer
+		is set.  Additional dependencies may have been added durring the call to
+		gatherCleanupDependencies
+	*/
+	public void addCleanupDependencies(Map<String, TestMethod> methods)
+		{
+		for (String method : m_sdMethods)
+			{
+			TestMethod tm = methods.get(method);
+			if (tm.addSoftObserver(this))
+				m_depCount ++;
+			}
+		}
+		
 	//---------------------------------------------------------------------------
 	public void resolveDependencies(Map<String, List<TestMethod> > groupBucket,
 				Map<String, TestMethod> methods)
@@ -174,7 +246,8 @@ public class TestMethod extends DepLink
 				throw new MissingDependencyException(method);
 				
 			TestMethod tm = methods.get(method);
-			tm.addHardDependency(getFullName());
+			//Instead call special method
+			tm.yourMyCleanupMethod(getFullName());
 			}
 			
 		it = m_hdMethods.listIterator();
@@ -320,6 +393,13 @@ public class TestMethod extends DepLink
 		}
 		
 	//---------------------------------------------------------------------------
+	public void yourMyCleanupMethod(String setupMethod)
+		{
+		addHardDependency(setupMethod);
+		m_setupMethods.add(setupMethod);
+		}
+		
+	//---------------------------------------------------------------------------
 	//Probably add more to this
 	public synchronized void setStatus(String status)
 		{
@@ -349,6 +429,7 @@ public class TestMethod extends DepLink
 			{
 			m_status = null;
 			m_hardObservers.reset();
+			m_softObservers.reset();
 			}
 		}
 		

@@ -98,4 +98,9 @@ public abstract class DepLink implements Observer
 		{
 		return (m_hardObservers.getObservers());
 		}
+		
+	public Set<DepLink> getSoftObservers()
+		{
+		return (m_softObservers.getObservers());
+		}
 	}
