@@ -145,12 +145,23 @@ public class TestClass
 		
 	//---------------------------------------------------------------------------
 	/**
-		Sets the class with data form the data provider
+		Sets the class with data from the data provider
 	*/
 	public void initialize()
 			throws InitializationException
 		{
+		Map<String, ? extends Object> dataSet = null;
 		try
+			{
+			dataSet = m_dataDriver.getNextDataSet();
+			}
+		catch (Exception e)
+			{
+			throw new InitializationException(e);
+			}
+			
+		BeanUtil.initializeClass(m_class, dataSet, m_classInstance);
+		/* try
 			{
 			Method[] methods = m_class.getMethods();
 			Map<String, Method> methodMap = new HashMap();
@@ -185,7 +196,7 @@ public class TestClass
 			{
 			// TODO: fix this
 			e.printStackTrace();
-			}
+			} */
 		}
 		
 	//---------------------------------------------------------------------------

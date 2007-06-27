@@ -8,4 +8,9 @@ public class InitializationException extends Exception
 		{
 		super(message);
 		}
+		
+	public InitializationException(Throwable t)
+		{
+		super(t);
+		}
 	}

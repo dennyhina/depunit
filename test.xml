@@ -10,6 +10,14 @@ Loop at the end
 		<class name="LoginTestPart2"/>
 	</classGroup>
 	
+	<run name="Data Driver Run">
+		<classes>
+			<class name="DataDriverTest">
+				<driver class="TestDataDriver"/>
+			</class>
+		</classes>
+	</run>
+	
 	<run name="First Run">
 		<classes>
 			<includeGroup>login_group</includeGroup>

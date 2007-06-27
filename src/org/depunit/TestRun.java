@@ -24,7 +24,7 @@ public class TestRun
 			}
 			
 		public ClassConfig(Element e)
-				throws XMLException
+				throws XMLException, InitializationException
 			{
 			m_params = null;
 			m_name = e.getAttribute("name");
@@ -34,7 +34,41 @@ public class TestRun
 			NodeList nl = e.getElementsByTagName("driver");
 			if (nl.getLength() != 0)
 				{
-				m_dataDriver = new XMLDataDriver((Element)nl.item(0));
+				Element driver = (Element)nl.item(0);
+				if (driver.hasAttribute("class"))  //Custom driver
+					{
+					try
+						{
+						Class driverClass = Class.forName(driver.getAttribute("class"));
+						m_dataDriver = (DataDriver)driverClass.newInstance();
+						}
+					catch (ClassNotFoundException cnfe)
+						{
+						throw new XMLException("Unable to find class "+driver.getAttribute("class"));
+						}
+					catch (InstantiationException ie)
+						{
+						throw new XMLException("Unable to instantiate class "+driver.getAttribute("class"));
+						}
+					catch (IllegalAccessException iae)
+						{
+						throw new XMLException(iae.toString());
+						}
+						
+					//Initialize data driver with params
+					Map<String, String> values = new HashMap<String, String>();
+					
+					NodeList subnl = driver.getElementsByTagName("value");
+					for (int J = 0; J < subnl.getLength(); J++)
+						{
+						Element value = (Element)subnl.item(J);
+						values.put(value.getAttribute("name"), value.getFirstChild().getNodeValue());
+						}
+						
+					BeanUtil.initializeClass(m_dataDriver.getClass(), values, m_dataDriver);
+					}
+				else
+					m_dataDriver = new XMLDataDriver(driver);
 				}
 			else
 				{
@@ -101,7 +135,7 @@ public class TestRun
 		}
 		
 	public TestRun(Element e, Map<String, List<ClassConfig>> classGroups)
-			throws XMLException
+			throws XMLException, InitializationException
 		{
 		m_classes = new HashMap<String, ClassConfig>();
 		m_methods = new ArrayList<MethodConfig>();
