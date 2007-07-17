@@ -1,6 +1,8 @@
+#summary Main page
+
 = Introduction =
 
-Reason for creating yet another Java unit test framework.  I know it is insane, there are already so many to choose from.  I admit I have only used two: JUnit and TestNG.  Both very good but, always lacking in my mind.  I'll start by telling what I didn't like about these two and if you can sympathise, maybe DepUnit is for you.
+Reason for creating yet another Java unit test framework.  I know it is insane, there are already so many to choose from.  I admit I have only used two: JUnit and TestNG.  Both very good but, always lacking in my mind.  I'll start by telling what I didn't like about these two and if you can sympathize, maybe DepUnit is for you.
 
 JUnit:  Annotations were a huge step in the right direction for making this one easier to use.  It always seemed wrong to me to have each test method executed on its own instance of the class.  If I wanted to share data among the tests it had to be placed statically on the object.  Each method on its own instance kind of takes me back to my procedural programming days.
 
