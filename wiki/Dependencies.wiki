@@ -1,0 +1,33 @@
+#summary How Dependencies work in DepUnit
+
+= Dependencies =
+
+Dependencies between unit tests are the core of DepUnit.  Dependencies are broken into two types: Soft and Hard.
+
+
+==Soft Dependencies==
+
+How are they declared:
+{{{
+@Test(softDependencyOn = { "localMethod", "Class.method" })
+}}}
+
+Soft dependencies are really just used to ensure proper ordering of your tests.  DepUnit will ensure that the tests listed in the softDependencyOn array are ran before the current one.  The test method will always run regardless if the dependency tests pass or fail.
+
+
+==Hard Dependencies==
+
+How they are declared:
+{{{
+@Test(hardDependencyOn = { "localMethod", "Class.method" })
+}}}
+
+Hard dependencies help DepUnit to decide when to run a test as well as if to run a test.  For example lets take the following test method declaration:
+{{{
+@Test(hardDependencyOn = { "A" })
+public void B()
+}}}
+
+Test B has a hard dependency on test A.  Test B will always run after test A but only if test A succeeds.  If for some reason test A fails test B will not run.
+
+Hard dependencies also effect the number of times a test is ran if there is a DataDriver involved.
