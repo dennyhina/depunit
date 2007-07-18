@@ -1,30 +1,80 @@
+<!--
+The root element of a DepUnit test xml file.  The verbose attribute is to specify
+the amount of info that DepUnit prints out when running the unit tests.
+-->
 <!ELEMENT suite (classGroup*,run+)>
 	<!ATTLIST suite name CDATA #REQUIRED>
 	<!ATTLIST suite verbose CDATA #IMPLIED>
 
+<!--
+The classGroup is used to group together classes that are commonly used 
+throughout the different runs of the suite.  The name attribute can be
+used to reference this group in the includeGroup tag.
+-->
 <!ELEMENT classGroup (class+)>
 	<!ATTLIST classGroup name CDATA #REQUIRED>
-	
+
+<!-- 
+This represents a single run of tests.  The classes within a run are 
+instanciated only once.
+-->	
 <!ELEMENT run (classes,tests?)>
 	<!ATTLIST run name CDATA #REQUIRED>
 
+<!--
+This is the classes that will be used durring the test run.
+-->
 <!ELEMENT classes (includeGroup?,class*)>
 
+<!-- 
+This references a classGroup that was previously defined.
+-->
 <!ELEMENT includeGroup (#PCDATA)>
 
+<!-- 
+This is a single class that is included in the run.  All methods of this class
+that are defined by the Test annotation will be ran unless a test method is 
+defined for the run.
+-->
 <!ELEMENT class (value*|driver)>
 	<!ATTLIST class name CDATA #REQUIRED>
 
+<!-- 
+The value element is used in several places and in all it represents property of
+an object that is to be set.  The name attribute corrosponds to the property and
+an appropriate set method will be called to set the value.  For example if the 
+value is named StudentName a method setStudentName will be called on the object
+to set the value.  Typical bean behavior.
+-->
 <!ELEMENT value (#PCDATA)>
 	<!ATTLIST value name CDATA #REQUIRED>
-	
+
+<!-- 
+This element represents the data driver for a class.  The data driver can either
+be inline or implemented in a seperate class.  If inline the driver element will 
+have data sub elements.  The tests will be ran once for each data element.
+Alternativly the name of a class can be provided in the class attribute that must
+implement the DataDriver interface.
+-->	
 <!ELEMENT driver (data*|value*)>
 	<!ATTLIST driver class CDATA #IMPLIED>
 
+<!-- 
+This element represents one set of data to be used for a run of tests.  The 
+tests will be ran once for each data element.
+-->
 <!ELEMENT data (value+)>
 
+<!-- 
+This element is used to specify specific tests to be ran
+-->
 <!ELEMENT tests (method+)>
 
+<!-- 
+The method element is the full name of the test method to be ran.  If the test
+has any hard dependencies, they will be ran firs in the appropriate order along
+with any cleanup methods afterwords.
+-->
 <!ELEMENT method (#PCDATA)>
 		
 
