@@ -1,2 +1,2 @@
-Main-Class: org.depunit.SUnit
+Main-Class: org.depunit.DepUnit
 

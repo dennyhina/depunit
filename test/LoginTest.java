@@ -2,6 +2,7 @@
 import org.depunit.annotations.*;
 import org.depunit.RunContext;
 import static java.lang.System.out;
+import static org.junit.Assert.*;
 
 public class LoginTest
 	{
@@ -38,6 +39,7 @@ public class LoginTest
 		out.println("    user = "+m_userName);
 		out.println("    password = "+m_password);
 		m_context.setParam("Login", this);
+		assertTrue(true);
 		}
 		
 	@Test
