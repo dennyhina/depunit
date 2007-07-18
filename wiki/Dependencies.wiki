@@ -2,7 +2,7 @@
 
 = Dependencies =
 
-Dependencies between unit tests are the core of DepUnit.  Dependencies are broken into two types: Soft and Hard.  Dependencies can be to methods of the same class or other classes.
+Dependencies between unit tests are the core of !DepUnit.  Dependencies are broken into two types: Soft and Hard.  Dependencies can be to methods of the same class or other classes.
 
 
 ==Soft Dependencies==
