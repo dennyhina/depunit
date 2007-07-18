@@ -2,7 +2,7 @@
 
 =Test Ordering=
 
-Without any dependencies defined DepUnit will run the tests in the order in which they show up in the class:
+Without any dependencies defined !DepUnit will run the tests in the order in which they show up in the class:
 {{{
 public class TestClass
   {
@@ -26,5 +26,4 @@ The above tests will run in this order
   # testThree
 
 The order can be changed by adding hard or soft dependencies to each test.  Test ordering is very deterministic.
-
 
