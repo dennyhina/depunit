@@ -20,7 +20,7 @@ public class MyFirstTestClass
   }
 }}}
 
-Notice that DepUnit includes the Assert class from JUnit (it was so good, why rewrite it?).
+Notice that !DepUnit includes the Assert class from JUnit (it was so good, why rewrite it?).
 
 Now run the test:
 {{{
@@ -42,3 +42,13 @@ Now run the xml file:
 {{{
 >java -cp .;depunit.jar org.depunit.DepUnit -x unittest.xml
 }}}
+
+Now that you have your feet wet with a simple example try adding more tests and have a look at the following pages for more in depth help.
+
+CommandLine - Other command line options you can use.
+
+[XMLFormat] - Format of the XML file and other things you can do with it.
+
+[Dependencies] - The true power of !DepUnit.
+
+DataDriver - Run the same tests with different data.
