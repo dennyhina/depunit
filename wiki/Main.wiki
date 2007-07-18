@@ -1,4 +1,4 @@
-#summary Main page
+#summary Reasons for another Java unit test framework.
 
 = Introduction =
 
