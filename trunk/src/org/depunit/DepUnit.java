@@ -13,6 +13,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.dom.*;
+import static java.lang.System.out;
 
 public class DepUnit
 	{
@@ -88,6 +89,20 @@ public class DepUnit
 		}
 		
 	//---------------------------------------------------------------------------
+	private static void printHelp()
+		{
+		out.println("DepUnit version X");
+		out.println("Usage: java -jar depunit.jar [-r <report file>] [-s <stylesheet>]");
+		out.println("      ([-x <xml file> [-x ...]]|([-c <test class> [-c ...]]");
+		out.println("      [<target method> ...]))");
+		out.println("  -r: Name of the xml report file to generate.");
+		out.println("  -s: Stylesheet to use to style the report.");
+		out.println("  -x: XML input file that defines a suite of test runs.");
+		out.println("  -c: Test class to include in the run.");
+		out.println("  target methods: Specific test methods to run.");
+		}
+		
+	//---------------------------------------------------------------------------
 	public static void main(String[] args)
 			throws Exception
 		{
@@ -95,6 +110,12 @@ public class DepUnit
 		CommandLine cl = new CommandLine();
 		ArgumentProcessor proc = new ArgumentProcessor(PARAMETERS);
 		proc.processArgs(args, cl);
+		
+		if (cl.help || (args.length == 0))
+			{
+			printHelp();
+			return;
+			}
 		
 		Document doc = createResultDocument();
 		if (cl.xmlList.size() > 0)

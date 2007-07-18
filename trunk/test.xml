@@ -1,3 +1,5 @@
+<!DOCTYPE suite SYSTEM "http://depunit.googlecode.com/files/depunit_1_0.dtd">
+
 <!--
 Needed test cases
 One method loops

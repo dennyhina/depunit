@@ -1,0 +1,7 @@
+<suite name="My Test Suite">
+	<run name="My first run">
+		<classes>
+			<class name="MyFirstTestClass"/>
+		</classes>
+	</run>
+</suite>

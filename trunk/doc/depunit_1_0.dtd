@@ -1,0 +1,30 @@
+<!ELEMENT suite (classGroup*,run+)>
+	<!ATTLIST suite name CDATA #REQUIRED>
+	<!ATTLIST suite verbose CDATA #IMPLIED>
+
+<!ELEMENT classGroup (class+)>
+	<!ATTLIST classGroup name CDATA #REQUIRED>
+	
+<!ELEMENT run (classes,tests?)>
+	<!ATTLIST run name CDATA #REQUIRED>
+
+<!ELEMENT classes (includeGroup?,class*)>
+
+<!ELEMENT includeGroup (#PCDATA)>
+
+<!ELEMENT class (value*|driver)>
+	<!ATTLIST class name CDATA #REQUIRED>
+
+<!ELEMENT value (#PCDATA)>
+	<!ATTLIST value name CDATA #REQUIRED>
+	
+<!ELEMENT driver (data*|value*)>
+	<!ATTLIST driver class CDATA #IMPLIED>
+
+<!ELEMENT data (value+)>
+
+<!ELEMENT tests (method+)>
+
+<!ELEMENT method (#PCDATA)>
+		
+
