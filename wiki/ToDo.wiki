@@ -1,0 +1,6 @@
+#summary List of todo items that have not made it to the code yet.
+
+= To Do List =
+
+  * Implement the regression flag - This will allow !DepUnit to re run failed tests.
+  * Multi thread flag - !DepUnit is designed to be multi threaded but there is now way to enable it.
