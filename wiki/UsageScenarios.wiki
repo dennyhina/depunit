@@ -192,3 +192,5 @@ public class QueryDataDriver implements DataDriver
 }}}
 
 See the DataDriver page for more information on how data drivers work.
+
+The data driver returns a Map for each run of the test.  The map's key is the name of the property and the value is - well - the value.
