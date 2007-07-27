@@ -12,7 +12,7 @@ How are they declared:
 @Test(softDependencyOn = { "localMethod", "Class.method" })
 }}}
 
-Soft dependencies are really just used to ensure proper ordering of your tests.  DepUnit will ensure that the tests listed in the softDependencyOn array are ran before the current one.  The test method will always run regardless if the dependency tests pass or fail.
+Soft dependencies are really just used to ensure proper ordering of your tests.  !DepUnit will ensure that the tests listed in the softDependencyOn array are ran before the current one.  The test method will always run regardless if the dependency tests pass or fail.
 
 
 ==Hard Dependencies==
