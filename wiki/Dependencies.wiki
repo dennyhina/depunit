@@ -22,7 +22,7 @@ How they are declared:
 @Test(hardDependencyOn = { "localMethod", "Class.method" })
 }}}
 
-Hard dependencies help DepUnit to decide when to run a test as well as if to run a test.  For example lets take the following test method declaration:
+Hard dependencies help !DepUnit to decide when to run a test as well as if to run a test.  For example lets take the following test method declaration:
 {{{
 @Test(hardDependencyOn = { "A" })
 public void B()
