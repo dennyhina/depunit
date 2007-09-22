@@ -33,6 +33,8 @@ public class BeanUtil
 						m.invoke(instance, dataSet.get(param));
 					else if (type == int.class)
 						m.invoke(instance, new Integer((String)dataSet.get(param)));
+					else if (type == boolean.class)
+						m.invoke(instance, new Boolean((String)dataSet.get(param)));
 					else
 						System.out.println("Param type = "+type);
 					}

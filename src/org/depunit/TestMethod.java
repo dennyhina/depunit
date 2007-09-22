@@ -465,6 +465,16 @@ public class TestMethod extends DepLink
 		}
 		
 	//---------------------------------------------------------------------------
+	public void skipMethod(Map<String, Object> runParams)
+			throws InitializationException, ObjectCreationException
+		{
+		//This needs to be done so the data provider will skip a data set
+		m_testClass.getClassInstance(runParams);
+		if (isLoopStart())
+			m_testClass.initialize();
+		}
+		
+	//---------------------------------------------------------------------------
 	public void callMethod(Map<String, Object> runParams)
 			throws ObjectCreationException, IllegalAccessException,
 					InvocationTargetException, InitializationException

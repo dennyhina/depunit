@@ -1,4 +1,4 @@
-<!DOCTYPE suite SYSTEM "http://depunit.googlecode.com/files/depunit_1_0.dtd">
+<!DOCTYPE suite SYSTEM "http://depunit.googlecode.com/svn/trunk/doc/depunit_1_0.dtd">
 
 <!--
 Needed test cases
@@ -81,6 +81,23 @@ Loop at the end
 			</class>
 		</classes>
 		
+	</run>
+	
+	<run name="fail login">
+		<classes>
+			<class name="LoginTest" >
+				<value name="UserName">Sammy</value>
+				<value name="Password">secret</value>
+				<value name="Fail">true</value>
+			</class>
+			<class name="Project">
+				<driver>
+					<data>
+						<value name="ProjectName">my project</value>
+					</data>
+				</driver>
+			</class>
+		</classes>
 	</run>
 	
 </suite>
