@@ -36,7 +36,8 @@ public class XMLDataDriver implements DataDriver
 		
 	public boolean hasNextDataSet()
 		{
-		return (m_listPos < m_dataList.size());
+		boolean ret = m_listPos < m_dataList.size();
+		return (ret);
 		}
 		
 	public Map<String, ? extends Object> getNextDataSet()

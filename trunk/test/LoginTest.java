@@ -10,12 +10,14 @@ public class LoginTest
 	
 	private String m_userName;
 	private String m_password;
+	private boolean m_fail;
 	
 	public LoginTest(RunContext context)
 		{
 		m_context = context;
 		m_userName = "Bob";
 		m_password = "bobbyboy";
+		m_fail = false;
 		}
 		
 	public void setUserName(String userName)
@@ -32,6 +34,11 @@ public class LoginTest
 		{
 		}
 		
+	public void setFail(boolean fail)
+		{
+		m_fail = fail;
+		}
+		
 	@Test(
 		cleanupMethod = "logout")
 	public void login()
@@ -39,7 +46,8 @@ public class LoginTest
 		out.println("    user = "+m_userName);
 		out.println("    password = "+m_password);
 		m_context.setParam("Login", this);
-		assertTrue(true);
+		
+		assertTrue(!m_fail);
 		}
 		
 	@Test

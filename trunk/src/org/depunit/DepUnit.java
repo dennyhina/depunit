@@ -17,19 +17,25 @@ import static java.lang.System.out;
 
 public class DepUnit
 	{
+	private static final String REGRESSION_FILE = ".depunit_regression";
+	
 	private static final ParameterDef[] PARAMETERS = 
 		{
 		new BoolDef('?', "help"),
+		new BoolDef('e', "regression"),
 		new StringListDef('c', "classList"),
 		new StringDef('r', "reportFile"),
 		new StringDef('s', "styleSheet"),
 		new StringListDef('x', "xmlList"),
-		new NoFlagArgDef("targetMethods")
+		new NoFlagArgDef("targetMethods"),
+		new BoolDef('d', "debug")
 		};
 	
 	private static class CommandLine
 		{
 		public boolean help;
+		public boolean debug;
+		public boolean regression;
 		public List<String> classList;
 		public List<String> targetMethods;
 		public String reportFile;
@@ -39,11 +45,13 @@ public class DepUnit
 		public CommandLine()
 			{
 			help = false;
+			regression = false;
 			classList = new ArrayList<String>();
 			targetMethods = new ArrayList<String>();
 			reportFile = null;
 			styleSheet = null;
 			xmlList = new ArrayList<String>();
+			debug = false;
 			}
 		}
 		
@@ -92,9 +100,10 @@ public class DepUnit
 	private static void printHelp()
 		{
 		out.println("DepUnit version X");
-		out.println("Usage: java -jar depunit.jar [-r <report file>] [-s <stylesheet>]");
+		out.println("Usage: java -jar depunit.jar [-e][-v] [-r <report file>] [-s <stylesheet>]");
 		out.println("      ([-x <xml file> [-x ...]]|([-c <test class> [-c ...]]");
 		out.println("      [<target method> ...]))");
+		out.println("  -e: Runs DepUnit in regression mode.");
 		out.println("  -r: Name of the xml report file to generate.");
 		out.println("  -s: Stylesheet to use to style the report.");
 		out.println("  -x: XML input file that defines a suite of test runs.");
@@ -102,12 +111,14 @@ public class DepUnit
 		out.println("  target methods: Specific test methods to run.");
 		}
 		
+	private static CommandLine cl;
+		
 	//---------------------------------------------------------------------------
 	public static void main(String[] args)
 			throws Exception
 		{
 		int failCount = 0;
-		CommandLine cl = new CommandLine();
+		cl = new CommandLine();
 		ArgumentProcessor proc = new ArgumentProcessor(PARAMETERS);
 		proc.processArgs(args, cl);
 		
@@ -128,12 +139,12 @@ public class DepUnit
 			}
 		else
 			{
-			DepUnit du = new DepUnit(new TestRun(cl.classList, cl.targetMethods));
-		
+			DepUnit du = new DepUnit(new TestRun(cl.classList, cl.targetMethods), cl.debug);
+			
 			//Could call this from a Thread class using multiple threads
 			du.run();
 		
-			du.writeReport(doc);
+			du.writeReport("", doc);
 			
 			failCount = du.getFailedCount();
 			}
@@ -141,6 +152,18 @@ public class DepUnit
 		if (cl.reportFile != null)
 			{
 			writeResults(doc, cl.reportFile, cl.styleSheet);
+			}
+			
+		if (cl.regression)
+			{
+			writeResults(doc, REGRESSION_FILE, null);
+			}
+			
+		if (failCount == 0)
+			{
+			File regressionFile = new File(REGRESSION_FILE);
+			if (regressionFile.exists())
+				regressionFile.delete();
 			}
 			
 		System.exit(failCount);
@@ -188,13 +211,13 @@ public class DepUnit
 				Element run = (Element)nl.item(I);
 				String runName = run.getAttribute("name");
 				
-				DepUnit du = new DepUnit(new TestRun(run, classGroups));
+				DepUnit du = new DepUnit(new TestRun(run, classGroups), cl.debug);
 				du.setVerbosity(verbosity);
 				
 				if (verbosity > 0)
 					System.out.println("Test Run: "+runName);
 				du.run();
-				du.writeReport(results);
+				du.writeReport(runName, results);
 				failCount += du.getFailedCount();
 				}
 			}
@@ -219,10 +242,12 @@ public class DepUnit
 	private Stack<TestMethod> m_cleanupStack;
 	private Map<String, Object> m_runParams;
 	private int m_verbosity;
+	private boolean m_debug;
 	
-	public DepUnit(TestRun testRun)
+	public DepUnit(TestRun testRun, boolean debug)
 			throws ClassNotFoundException, MissingDependencyException
 		{
+		setDebug(debug);
 		//System.out.println("New DepUnit");
 		m_verbosity = 0;
 		//m_queueLookup = new HashSet<TestMethod>();
@@ -265,6 +290,13 @@ public class DepUnit
 		}
 		
 	//===========================================================================
+	public void setDebug(boolean debug)
+		{
+		out.println("Debug = "+debug);
+		m_debug = debug;
+		}
+		
+	//---------------------------------------------------------------------------
 	public List<TestMethod> getTestMethods(String name)
 		{
 		List<TestMethod> retList;
@@ -294,6 +326,17 @@ public class DepUnit
 		{
 		Set<String> cleanupSet = new HashSet<String>();
 		
+		if (m_debug)
+			{
+			out.println("Target methods:");
+			Iterator<TestMethod> it = targetMethods.iterator();
+			while (it.hasNext())
+				{
+				TestMethod tm = it.next();
+				out.println("  "+tm.getFullName());
+				}
+			}
+			
 		//Add methods to target bucket, used for soft dependency lookup
 		for (TestMethod tm : targetMethods)
 			m_targetBucket.put(tm.getFullName(), tm);
@@ -322,8 +365,8 @@ public class DepUnit
 			}
 			
 		//Adds cleanup methods to the end of the run
-		/* while (!m_cleanupStack.empty())
-			addToProcessQueue(m_cleanupStack.pop()); */
+		while (!m_cleanupStack.empty())
+			addToProcessQueue(m_cleanupStack.pop());
 			
 		//Now mark all other methods as not_run
 		for (TestMethod tm : m_testMethods)
@@ -347,19 +390,21 @@ public class DepUnit
 			tm.blockNRun();  //Wait until dependencies are satisfied
 			//System.out.println("done Blocking");
 			
-			if (tm.getStatus() != null)
-				{
-				tr.setStatus(tm.getStatus());
-				System.out.println("Skipping "+tm.getFullName());
-				continue;
-				}
-				
-			if (!tm.isProcessMethod())
-				tc.callBeforeTest();
-				
-			//Call tm method
 			try
 				{
+				if (tm.getStatus() != null)
+					{
+					tm.skipMethod(m_runParams);
+					tr.setStatus(tm.getStatus());
+					System.out.println("  Skipping "+tm.getFullName());
+					continue;
+					}
+					
+				if (!tm.isProcessMethod())
+					tc.callBeforeTest();
+					
+				//Call tm method
+			
 				if (m_verbosity > 0)
 					System.out.println("  "+tm.getFullName());
 				tm.callMethod(m_runParams);
@@ -444,15 +489,24 @@ public class DepUnit
 		
 	//---------------------------------------------------------------------------
 	public void addToProcessQueue(TestMethod method)
+			throws MissingDependencyException
 		{
 		//To make this faster put added methods in a HashSet and check against that
 		if (m_processQueue.contains(method))
 			return;
 		
+		if (m_debug)
+			out.println("Adding method "+method.getFullName());
+			
 		//Add hard dependencies
 		List<String> hardDep = method.getHardDependencies();
 		for (String dep : hardDep)
-			addToProcessQueue(m_tmBucket.get(dep));
+			{
+			TestMethod m = m_tmBucket.get(dep);
+			if (m == null)
+				throw new MissingDependencyException(dep);
+			addToProcessQueue(m);
+			}
 			
 		//Add soft dependencies
 		List<String> softDep = method.getSoftDependencies();
@@ -488,7 +542,7 @@ public class DepUnit
 		
 	//---------------------------------------------------------------------------
 	//public void writeReport(String fileName, String styleSheet)
-	public void writeReport(Document doc)
+	public void writeReport(String runName, Document doc)
 		{
 		try
 			{
@@ -515,6 +569,7 @@ public class DepUnit
 				
 			Element run = doc.createElement("run");
 			root.appendChild(run);
+			run.setAttribute("name", runName);
 			run.setAttribute("total", String.valueOf(total));
 			run.setAttribute("passed", String.valueOf(passed));
 			run.setAttribute("failed", String.valueOf(failed));
