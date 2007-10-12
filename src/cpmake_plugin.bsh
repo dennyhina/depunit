@@ -1,0 +1,98 @@
+
+public class DepUnitTest
+	{
+	private String name;
+	private ClassPath m_classpath;
+	private String[] m_prereqs;
+	private boolean m_regres;
+	private String m_reportFile;
+	private String m_styleSheet;
+	private String m_xmlInput;
+	private ArrayList m_testClasses;
+	private ArrayList m_testMethods;
+	
+	public DepUnitTest(String targetName, String[] prereqs, ClassPath classpath)
+		{
+		m_testClasses = new ArrayList();
+		m_testMethods = new ArrayList();
+		m_classpath = classpath;
+		rule = make.createPhonyRule(targetName, prereqs, "depUnitTestMethod");
+		rule.setCallBackData(this);
+		}
+		
+	public void setRegressionMode(boolean regres)
+		{
+		m_regres = regres;
+		}
+		
+	public void setReportFile(String reportFile)
+		{
+		m_reportFile = reportFile;
+		}
+		
+	public void setStyleSheet(String styleSheet)
+		{
+		m_styleSheet = styleSheet;
+		}
+		
+	public void setXMLInputFile(String xmlInput)
+		{
+		m_xmlInput = xmlInput;
+		}
+		
+	public void addTestClasses(String[] classes)
+		{
+		for (c : classes)
+			m_testClasses.add(c);
+		}
+		
+	public void addTestClass(String klass)
+		{
+		m_testClasses.add(klass);
+		}
+		
+	public void addTargetMethods(String[] methods)
+		{
+		for (method : methods)
+			m_testMethods.add(method);
+		}
+		
+	public void addTargetMethod(String method)
+		{
+		m_testMethods.add(method);
+		}
+		
+		
+	public void runTests()
+		{
+		cmd = "java -cp "+m_classpath+" org.depunit.DepUnit";
+		
+		if (m_regres)
+			cmd += " -e";
+			
+		if (m_reportFile != null)
+			cmd += " -r "+m_reportFile;
+			
+		if (m_styleSheet != null)
+			cmd += " -s "+m_styleSheet;
+			
+		if (m_xmlInput != null)
+			cmd += " -x "+m_xmlInput;
+			
+		for (c : m_testClasses)
+			cmd += " -c "+c;
+			
+		for (m : m_testMethods)
+			cmd += " "+m;
+		
+		make.exec(cmd);
+		}
+	}
+
+	
+void depUnitTestMethod(CPMakeRule rule)
+	{
+	data = rule.getCallBackData();
+	print("Running DepUnit test");
+	data.runTests();
+	}
