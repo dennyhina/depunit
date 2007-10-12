@@ -24,6 +24,7 @@ jp = new JavaProgram(srcdir, blddir, jarfile, extJarFiles);
 jp.setManifest("manifest.txt");
 jp.createRules();
 jp.setDefaultTarget();
+jp.getJarFile().addFiles(srcdir, "cpmake_plugin.bsh");
 
 tstclasspath = jp.getClassPath()+File.pathSeparator+testoutdir;
 print(tstclasspath);
