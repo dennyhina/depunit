@@ -18,9 +18,15 @@ used to reference this group in the includeGroup tag.
 This represents a single run of tests.  The classes within a run are 
 instanciated only once.
 -->	
-<!ELEMENT run (classes,tests?)>
+<!ELEMENT run (tag*,classes,tests?)>
 	<!ATTLIST run name CDATA #REQUIRED>
 
+<!--
+This element is used to tag runs.  Running test runs that are marked with a 
+particular tag is done by using the -t command line option
+-->
+<!ELEMENT tag (#PCDATA)>
+	
 <!--
 This is the classes that will be used durring the test run.
 -->

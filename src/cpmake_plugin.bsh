@@ -10,6 +10,7 @@ public class DepUnitTest
 	private String m_xmlInput;
 	private ArrayList m_testClasses;
 	private ArrayList m_testMethods;
+	private String[] m_testTags;
 	
 	public DepUnitTest(String targetName, String[] prereqs, ClassPath classpath)
 		{
@@ -18,6 +19,7 @@ public class DepUnitTest
 		m_classpath = classpath;
 		rule = make.createPhonyRule(targetName, prereqs, "depUnitTestMethod");
 		rule.setCallBackData(this);
+		m_testTags = new String[0];
 		}
 		
 	public void setRegressionMode(boolean regres)
@@ -62,6 +64,10 @@ public class DepUnitTest
 		m_testMethods.add(method);
 		}
 		
+	public void setTestTags(String[] tags)
+		{
+		m_testTags = tags;
+		}
 		
 	public void runTests()
 		{
@@ -78,6 +84,9 @@ public class DepUnitTest
 			
 		if (m_xmlInput != null)
 			cmd += " -x "+m_xmlInput;
+			
+		for (t : m_testTags)
+			cmd += " -t "+t;
 			
 		for (c : m_testClasses)
 			cmd += " -c "+c;
