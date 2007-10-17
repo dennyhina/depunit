@@ -12,6 +12,7 @@ jarfile = "depunit.jar";
 extdir = "ext";
 testsrcdir = "test";
 testoutdir = blddir+"/test";
+javadocdir = blddir+"/doc";
 
 //This script has the JavaCompiler and JarFile class in it.
 make.includeCPMakeScript("java.bsh"); 
@@ -34,14 +35,14 @@ make.addSearchPath(testsrcdir);
 
 //-------------------------------------------------------------------
 //==-- RULE FOR CREATING DIRECTORIES --==
-make.createDirectoryRule("doc", null, true);
+make.createDirectoryRule(javadocdir, null, true);
 
 //-------------------------------------------------------------------
 //==-- CREATE JAVADOCS --==
-make.createPhonyRule("javadoc", "doc", "javadoc");
+make.createPhonyRule("javadoc", javadocdir, "javadoc");
 void javadoc(String target, String[] prereqs)
 	{
-	make.exec(srcdir, "javadoc -public -d ../doc "+make.arrayToString(sourceFiles), true);
+	make.exec(srcdir, "javadoc -public -d ../build/doc "+make.arrayToString(sourceFiles), true);
 	}
 	
 //-------------------------------------------------------------------

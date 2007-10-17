@@ -26,6 +26,7 @@ public class DepUnit
 		new StringListDef('c', "classList"),
 		new StringDef('r', "reportFile"),
 		new StringDef('s', "styleSheet"),
+		new StringListDef('t', "tagList"),
 		new StringListDef('x', "xmlList"),
 		new NoFlagArgDef("targetMethods"),
 		new BoolDef('d', "debug")
@@ -41,6 +42,7 @@ public class DepUnit
 		public String reportFile;
 		public String styleSheet;
 		public List<String> xmlList;
+		public ArrayList<String> tagList;
 		
 		public CommandLine()
 			{
@@ -52,6 +54,7 @@ public class DepUnit
 			styleSheet = null;
 			xmlList = new ArrayList<String>();
 			debug = false;
+			tagList = new ArrayList<String>();
 			}
 		}
 		
@@ -101,13 +104,14 @@ public class DepUnit
 		{
 		out.println("DepUnit version X");
 		out.println("Usage: java -jar depunit.jar [-e][-v] [-r <report file>] [-s <stylesheet>]");
-		out.println("      ([-x <xml file> [-x ...]]|([-c <test class> [-c ...]]");
+		out.println("      ([-x <xml file> [-x ...] -t <tag> [-t ...]]|([-c <test class> [-c ...]]");
 		out.println("      [<target method> ...]))");
 		out.println("  -e: Runs DepUnit in regression mode.");
 		out.println("  -r: Name of the xml report file to generate.");
 		out.println("  -s: Stylesheet to use to style the report.");
 		out.println("  -x: XML input file that defines a suite of test runs.");
 		out.println("  -c: Test class to include in the run.");
+		out.println("  -t: Only test runs marked with this tag will run.");
 		out.println("  target methods: Specific test methods to run.");
 		}
 		
@@ -133,7 +137,7 @@ public class DepUnit
 			{
 			for (String xmlFile : cl.xmlList)
 				{
-				failCount += runSuite(xmlFile, doc);
+				failCount += runSuite(xmlFile, doc, cl.tagList);
 				//Have a bailout switch when fail occurs
 				}
 			}
@@ -170,7 +174,7 @@ public class DepUnit
 		}
 		
 	//---------------------------------------------------------------------------
-	private static int runSuite(String xmlFile, Document results)
+	private static int runSuite(String xmlFile, Document results, ArrayList<String> tagList)
 		{
 		int failCount = 0;
 		try
@@ -210,6 +214,26 @@ public class DepUnit
 				{
 				Element run = (Element)nl.item(I);
 				String runName = run.getAttribute("name");
+				
+				//Look for tags
+				if (tagList.size() > 0)
+					{
+					boolean proceed = false;
+					NodeList tagNList = run.getElementsByTagName("tag");
+					for (int i = 0; i < tagNList.getLength(); i++)
+						{
+						String tag = tagNList.item(i).getFirstChild().getNodeValue();
+						if (tagList.contains(tag))
+							{
+							//We will only run the "run" if it has a tag that was specified
+							proceed = true;
+							break;
+							}
+						}
+						
+					if (!proceed)
+						continue;
+					}
 				
 				DepUnit du = new DepUnit(new TestRun(run, classGroups), cl.debug);
 				du.setVerbosity(verbosity);
