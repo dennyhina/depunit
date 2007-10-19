@@ -245,8 +245,23 @@ public class DepUnit
 				failCount += du.getFailedCount();
 				}
 			}
+		catch (InitializationException ie)
+			{
+			if (ie.getCause() != null)
+				{
+				System.out.println(ie.getCause());
+				ie.getCause().printStackTrace();
+				}
+			else
+				System.out.println(ie);
+			}
+		catch (XMLException xmle)
+			{
+			System.out.println(xmle);
+			}
 		catch (Exception e)
 			{
+			System.out.println(e);
 			e.printStackTrace();
 			}
 			
