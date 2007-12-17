@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class RunContext
 	{
+	//Need to preserve a dirty flag for each parameter
 	private Map<String, Object> m_params;
 	
 	public RunContext(Map<String, Object> runParams)
