@@ -452,13 +452,26 @@ public class DepUnit
 				}
 			catch (ObjectCreationException oce)
 				{
+				if (m_debug)
+					{
+					System.out.println("OBJECT CREATION EXCEPTION");
+					oce.printStackTrace(System.out);
+					}
 				//Could not instanciate object
 				}
 			catch (IllegalAccessException iae)
 				{
+				if (m_debug)
+					{
+					System.out.println("ILLEGAL ACCESS EXCEPTION");
+					iae.printStackTrace(System.out);
+					}
 				}
 			catch (InitializationException ie)
 				{
+				if (m_debug)
+					System.out.println("INITIALIZATION EXCEPTION");
+					
 				ie.printStackTrace(System.out);
 				tm.setStatus(TestResult.STATUS_FAILED);
 				tr.setStatus(TestResult.STATUS_FAILED);
@@ -466,12 +479,14 @@ public class DepUnit
 				}
 			catch (InvocationTargetException ite)
 				{
+				if (m_debug)
+					System.out.println("INVOCATION TARGET EXCEPTION");
+					
 				Throwable t = ite.getCause();
 				tm.setStatus(TestResult.STATUS_FAILED);
 				tr.setStatus(TestResult.STATUS_FAILED);
 				tr.setException(t);
 				System.out.println(tm.printStack(t));
-				//t.printStackTrace(System.out);
 				}
 			
 			

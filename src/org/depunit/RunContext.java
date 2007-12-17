@@ -13,11 +13,11 @@ public class RunContext
 		
 	public void setParam(String name, Object value)
 		{
-		m_params.put(name, value);
+		m_params.put(name.toLowerCase(), value);
 		}
 		
 	public Object getParam(String name)
 		{
-		return (m_params.get(name));
+		return (m_params.get(name.toLowerCase()));
 		}
 	}

@@ -37,6 +37,12 @@ public class TestResult
 		}
 		
 	//---------------------------------------------------------------------------
+	public String toString()
+		{
+		return ("");
+		}
+		
+	//---------------------------------------------------------------------------
 	public void reportStatus(Document doc, Element test)
 		{
 		test.setAttribute("name", "");
@@ -52,7 +58,9 @@ public class TestResult
 			{
 			Element error = doc.createElement("error");
 			Element message = doc.createElement("message");
-			message.appendChild(doc.createTextNode(m_exception.getMessage()));
+			String msgStr = m_exception.getMessage();
+			if (msgStr != null)
+				message.appendChild(doc.createTextNode(m_exception.getMessage()));
 			error.appendChild(message);
 			
 			Element stack = doc.createElement("stack");

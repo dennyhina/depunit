@@ -219,6 +219,25 @@ public class TestClass
 				if (m_classInstance == null)
 					m_classInstance = m_class.newInstance();
 					
+				//If the context has params that match set methods we will set them
+				Method[] methods = m_class.getMethods();
+				for (Method m : methods)
+					{
+					String methodName = m.getName();
+					if (methodName.startsWith("set"))
+						{
+						String param = methodName.substring(3);
+						
+						Class<?>[] paramTypes = m.getParameterTypes();
+						Object data = runContext.get(param.toLowerCase());
+						if ((data != null) && (paramTypes.length == 1) && 
+							(data.getClass() == paramTypes[0]))
+							{
+							m.invoke(m_classInstance, data);							
+							}
+						}
+					}
+					
 				/* if (m_initParams != null)
 					{
 					Method[] methods = m_class.getMethods();
@@ -242,6 +261,10 @@ public class TestClass
 						}
 					} */
 				}
+			}
+		catch (InvocationTargetException ite)
+			{
+			throw new ObjectCreationException(ite);
 			}
 		catch (InstantiationException ie)
 			{

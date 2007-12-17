@@ -47,7 +47,12 @@ public class LoginTest
 		out.println("    password = "+m_password);
 		m_context.setParam("Login", this);
 		
-		assertTrue(!m_fail);
+		//assertTrue(!m_fail);
+		if (m_fail)
+			{
+			String s = null;
+			s.length();
+			}
 		}
 		
 	@Test
