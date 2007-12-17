@@ -12,7 +12,7 @@ Loop at the end
 		<class name="LoginTestPart2"/>
 	</classGroup>
 	
-	<run name="Data Driver Run">
+	<!-- <run name="Data Driver Run">
 		<classes>
 			<class name="DataDriverTest">
 				<driver class="TestDataDriver"/>
@@ -81,7 +81,7 @@ Loop at the end
 			</class>
 		</classes>
 		
-	</run>
+	</run> -->
 	
 	<run name="fail login">
 		<classes>

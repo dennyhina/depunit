@@ -8,6 +8,11 @@ public class Project
 	public void setProjectName(String name)
 		{
 		}
+		
+	public void setLogin(LoginTest login)
+		{
+		System.out.println("LOGIN IS NOW SET");
+		}
 	
 	@Test(
 		hardDependencyOn = { "LoginTest.login" })

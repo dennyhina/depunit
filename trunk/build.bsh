@@ -6,6 +6,8 @@
  
 import cpmake.*;
 
+print("=================================================================");
+
 srcdir = "src";
 blddir = "build";
 jarfile = "depunit.jar";
@@ -27,7 +29,8 @@ jp.createRules();
 jp.setDefaultTarget();
 jp.getJarFile().addFiles(srcdir, "cpmake_plugin.bsh");
 
-tstclasspath = jp.getClassPath()+File.pathSeparator+testoutdir;
+tstclasspath = jp.getClassPathObject();
+tstclasspath.addPath(testoutdir);
 print(tstclasspath);
 
 make.addSearchPath(srcdir);
@@ -60,7 +63,7 @@ void test(String target, String[] prereqs)
 	print("Running test");
 	//make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -c LoginTest -c LoginTestPart2 -s report.xsl -r build/results.html LoginTestPart2.testThree");
 	//make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -x test.xml -s report.xsl -r build/results.html");
-	make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -e -d -x test.xml -r build/results.xml");
+	make.exec("java -cp "+tstclasspath+" org.depunit.DepUnit -e -x test.xml -r build/results.xml");
 	}	
 
 
