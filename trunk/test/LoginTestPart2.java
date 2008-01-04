@@ -24,7 +24,7 @@ public class LoginTestPart2
 		}
 		
 	@Test(
-		hardDependencyOn = { "LoginTest.login" } )
+		hardDependencyOn = { "testOne" } )
 	public void testTwo()
 		{
 		//out.println("testTwo");

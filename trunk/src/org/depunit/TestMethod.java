@@ -419,7 +419,7 @@ public class TestMethod extends DepLink
 		//Check for data driver and reset it
 		DataDriver dd = getTestClass().getDataDriver();
 		if (dd != null)
-			dd.reset();
+			dd.internalReset();
 		}
 		
 	//---------------------------------------------------------------------------

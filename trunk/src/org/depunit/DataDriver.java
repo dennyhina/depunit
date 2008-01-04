@@ -6,18 +6,29 @@ import java.util.Map;
 Data drivers work like Java Iterators.  It lets DepUnit iterate over
 a set of test data.
 */
-public interface DataDriver
+public abstract class DataDriver
 	{
+	private boolean m_locked = false;
+	
+	void internalReset()
+		{
+		if (!m_locked)
+			reset();
+		}
+		
+	void lockReset() { m_locked = true; }
+	void unlockReset() { m_locked = false; }
+		
 	/**
 	If this data driver is nested within another data driver the reset is called
 	for every iteration of the outer data driver
 	*/
-	public void reset();
+	public abstract void reset();
 	
 	/**
 	Returns true if there is more data to be retrieved from getNextDataSet
 	*/
-	public boolean hasNextDataSet();
+	public abstract boolean hasNextDataSet();
 	
 	/**
 	Returns a map of values to be set on the TestBean object before running tests.
@@ -34,5 +45,5 @@ public interface DataDriver
 	}
 	</code>
 	*/
-	public Map<String, ? extends Object> getNextDataSet() throws Exception;
+	public abstract Map<String, ? extends Object> getNextDataSet() throws Exception;
 	}
