@@ -28,6 +28,7 @@ public class ProcessQueue
 			{
 			DepLink last = start;
 			Set<DepLink> set = start.getHardObservers();
+
 			Iterator<DepLink> it = set.iterator();
 			while (it.hasNext())
 				{
@@ -63,6 +64,8 @@ public class ProcessQueue
 				DataDriver dd = ((TestMethod)ret).getTestClass().getDataDriver();
 				if ((dd != null) && (dd != m_dataDriver) && dd.hasNextDataSet())
 					{
+					//System.out.println("NEW PROCESS LOOP");
+
 					m_innerLoop = new ProcessLoop(ret, dd);
 					ret = m_innerLoop.getNextMethod();
 					}
@@ -75,7 +78,9 @@ public class ProcessQueue
 					{
 					m_loopPos = m_start.getNext();
 					ret = m_start;
+					m_dataDriver.lockReset();
 					((TestMethod)ret).resetStatus();
+					m_dataDriver.unlockReset();
 					}
 				else
 					m_dataDriver.reset();
@@ -144,6 +149,8 @@ public class ProcessQueue
 			DataDriver dd = ret.getTestClass().getDataDriver();
 			if (dd != null)
 				{
+				//System.out.println("NEW PROCES LOOP");
+
 				m_innerLoop = new ProcessLoop(ret, dd);
 				ret = (TestMethod)m_innerLoop.getNextMethod();
 				}

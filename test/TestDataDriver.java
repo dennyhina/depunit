@@ -2,7 +2,7 @@
 import org.depunit.*;
 import java.util.*;
 
-public class TestDataDriver implements DataDriver
+public class TestDataDriver extends DataDriver
 	{
 	private String m_testValue;
 	private List<String> m_dataSet;

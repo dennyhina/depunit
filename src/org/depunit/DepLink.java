@@ -19,7 +19,7 @@ public abstract class DepLink implements Observer
 		public Observers(int type)
 			{
 			m_type = type;
-			m_observers = new HashSet<DepLink>();
+			m_observers = new LinkedHashSet<DepLink>();
 			}
 			
 		public Set<DepLink> getObservers() { return (m_observers); }

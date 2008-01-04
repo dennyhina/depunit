@@ -3,7 +3,7 @@ package org.depunit;
 import org.w3c.dom.*;
 import java.util.*;
 
-public class XMLDataDriver implements DataDriver
+public class XMLDataDriver extends DataDriver
 	{
 	private List<Map<String, String>> m_dataList;
 	private int m_listPos;
@@ -31,17 +31,24 @@ public class XMLDataDriver implements DataDriver
 		
 	public void reset()
 		{
+		//System.out.println("RESET");
 		m_listPos = 0;
 		}
 		
 	public boolean hasNextDataSet()
 		{
+		//System.out.println("POS: "+m_listPos+" SIZE: "+m_dataList.size());
+
 		boolean ret = m_listPos < m_dataList.size();
+		//System.out.println("RET "+ret);
+
 		return (ret);
 		}
 		
 	public Map<String, ? extends Object> getNextDataSet()
 		{
+		//System.out.println("NEXT");
+
 		Map<String, String> ret = m_dataList.get(m_listPos);
 		m_listPos ++;
 		

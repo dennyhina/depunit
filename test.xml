@@ -56,12 +56,12 @@ Loop at the end
 		<tests>
 			<method>LoginTest.login</method>
 		</tests>
-	</run>
+	</run> -->
 	
 	
 	<run name="Repeat run">
 		<classes>
-			<includeGroup>login_group</includeGroup>
+			<!-- <includeGroup>login_group</includeGroup> -->
 			
 			<class name="LoginTest">
 				<value name="UserName">Sammy</value>
@@ -81,9 +81,9 @@ Loop at the end
 			</class>
 		</classes>
 		
-	</run> -->
+	</run>
 	
-	<run name="fail login">
+	<!-- <run name="fail login">
 		<classes>
 			<class name="LoginTest" >
 				<value name="UserName">Sammy</value>
@@ -98,6 +98,6 @@ Loop at the end
 				</driver>
 			</class>
 		</classes>
-	</run>
+	</run> -->
 	
 </suite>

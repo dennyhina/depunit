@@ -7,7 +7,7 @@ import java.util.*;
 
 public class TestClass
 	{
-	public static class InitDataDriver implements DataDriver
+	public static class InitDataDriver extends DataDriver
 		{
 		private Map<String, String> m_data;
 		private boolean m_reset;
