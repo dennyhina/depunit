@@ -58,11 +58,24 @@ Loop at the end
 		</tests>
 	</run> -->
 	
-	
-	<run name="Repeat run">
+	<run name="Repeat run with cleanup">
 		<classes>
-			<!-- <includeGroup>login_group</includeGroup> -->
-			
+			<class name="RepeatCleanup">
+				<driver>
+					<data>
+						<value name="MyData">Here is my data</value>
+					</data>
+					<data>
+						<value name="MyData">Here is my data2</value>
+					</data>
+				</driver>
+			</class>
+		</classes>
+		
+	</run>
+	
+	<!-- <run name="Repeat run">
+		<classes>
 			<class name="LoginTest">
 				<value name="UserName">Sammy</value>
 				<value name="Password">secret</value>
@@ -81,7 +94,7 @@ Loop at the end
 			</class>
 		</classes>
 		
-	</run>
+	</run> -->
 	
 	<!-- <run name="fail login">
 		<classes>

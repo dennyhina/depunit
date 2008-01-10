@@ -513,7 +513,7 @@ public class TestMethod extends DepLink
 	public String toString()
 		{
 		StringBuilder sb = new StringBuilder();
-		
+		sb.append(m_method.getName());
 		return (sb.toString());
 		}
 		
