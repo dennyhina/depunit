@@ -180,7 +180,9 @@ public class DepUnit
 		try
 			{
 			int verbosity = 0;
-			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setValidating(false);
+			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document xmldoc = db.parse(new File(xmlFile));
 			
 			Element root = xmldoc.getDocumentElement();

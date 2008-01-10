@@ -32,8 +32,9 @@ public class ProcessQueue
 			Iterator<DepLink> it = set.iterator();
 			while (it.hasNext())
 				{
+				//We recursively look for the very last dependency link
 				DepLink dl = getLastLink(it.next());
-				if (dl.getPosition() > start.getPosition());
+				if (dl.getPosition() > last.getPosition())
 					last = dl;
 				}
 				
