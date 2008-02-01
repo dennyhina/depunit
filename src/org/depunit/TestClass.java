@@ -161,42 +161,6 @@ public class TestClass
 			}
 			
 		BeanUtil.initializeClass(m_class, dataSet, m_classInstance);
-		/* try
-			{
-			Method[] methods = m_class.getMethods();
-			Map<String, Method> methodMap = new HashMap();
-			
-			for (Method m : methods)
-				methodMap.put(m.getName().toLowerCase(), m);
-				
-			Map<String, ? extends Object> dataSet = m_dataDriver.getNextDataSet();
-			Set<String> paramNames = dataSet.keySet();
-			for (String param : paramNames)
-				{
-				Method m = methodMap.get("set"+param.toLowerCase());
-				if (m == null)
-					throw new InitializationException("Unable to locate method on "+m_fullName+" to set param "+param);
-				//System.out.println("Calling "+m.getName()+" with param "+dataSet.get(param)+" on class "+m_classInstance);
-				
-				if (dataSet.get(param) instanceof String)
-					{
-					Class type = m.getParameterTypes()[0]; //This assumes a lot
-					if (type == String.class)
-						m.invoke(m_classInstance, dataSet.get(param));
-					else if (type == int.class)
-						m.invoke(m_classInstance, new Integer((String)dataSet.get(param)));
-					else
-						System.out.println("Param type = "+type);
-					}
-				else
-					m.invoke(m_classInstance, dataSet.get(param));
-				}
-			}
-		catch (Exception e)
-			{
-			// TODO: fix this
-			e.printStackTrace();
-			} */
 		}
 		
 	//---------------------------------------------------------------------------
@@ -218,48 +182,26 @@ public class TestClass
 					
 				if (m_classInstance == null)
 					m_classInstance = m_class.newInstance();
-					
-				//If the context has params that match set methods we will set them
-				Method[] methods = m_class.getMethods();
-				for (Method m : methods)
+				}
+				
+			//If the context has params that match set methods we will set them
+			//We want to do this every time in case the context values change
+			Method[] methods = m_class.getMethods();
+			for (Method m : methods)
+				{
+				String methodName = m.getName();
+				if (methodName.startsWith("set"))
 					{
-					String methodName = m.getName();
-					if (methodName.startsWith("set"))
+					String param = methodName.substring(3);
+					
+					Class<?>[] paramTypes = m.getParameterTypes();
+					Object data = runContext.get(param.toLowerCase());
+					if ((data != null) && (paramTypes.length == 1) && 
+						(data.getClass() == paramTypes[0]))
 						{
-						String param = methodName.substring(3);
-						
-						Class<?>[] paramTypes = m.getParameterTypes();
-						Object data = runContext.get(param.toLowerCase());
-						if ((data != null) && (paramTypes.length == 1) && 
-							(data.getClass() == paramTypes[0]))
-							{
-							m.invoke(m_classInstance, data);							
-							}
+						m.invoke(m_classInstance, data);							
 						}
 					}
-					
-				/* if (m_initParams != null)
-					{
-					Method[] methods = m_class.getMethods();
-					Map<String, Method> methodMap = new HashMap();
-					
-					for (Method m : methods)
-						methodMap.put(m.getName().toLowerCase(), m);
-						
-					Set<String> paramNames = m_initParams.keySet();
-					for (String param : paramNames)
-						{
-						Method m = methodMap.get("set"+param.toLowerCase());
-						
-						Class type = m.getParameterTypes()[0]; //This assumes a lot
-						if (type == String.class)
-							m.invoke(m_classInstance, m_initParams.get(param));
-						else if (type == int.class)
-							m.invoke(m_classInstance, new Integer(m_initParams.get(param)));
-						else
-							System.out.println("Param type = "+type);
-						}
-					} */
 				}
 			}
 		catch (InvocationTargetException ite)
