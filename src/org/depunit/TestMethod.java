@@ -140,16 +140,16 @@ public class TestMethod extends DepLink
 		StateChange sc = (StateChange)arg;
 		
 		String status = sc.getStatus();
-		if (status != null)
+		if (status != null) //Test was ran
 			{
 			if ((sc.getDepType() == HARD_DEPENDENCY) && (!status.equals(STATUS_SUCCESS)))
 				setStatus(STATUS_SKIPPED);
-					
+			
 			m_depCount --;
 			if (m_depCount == 0)
 				notify();
 			}
-		else
+		else //The tests are begin reset
 			{
 			m_depCount ++;
 			if (sc.getDepType() == HARD_DEPENDENCY)
@@ -228,8 +228,7 @@ public class TestMethod extends DepLink
 		}
 		
 	//---------------------------------------------------------------------------
-	public void resolveDependencies(Map<String, List<TestMethod> > groupBucket,
-				Map<String, TestMethod> methods)
+	public void resolveCleanupMethods(Map<String, TestMethod> methods)
 			throws MissingDependencyException
 		{
 		ListIterator<String> it = m_cleanupMethods.listIterator();
@@ -249,8 +248,14 @@ public class TestMethod extends DepLink
 			//Instead call special method
 			tm.yourMyCleanupMethod(getFullName());
 			}
-			
-		it = m_hdMethods.listIterator();
+		}
+	
+	//---------------------------------------------------------------------------
+	public void resolveDependencies(Map<String, List<TestMethod> > groupBucket,
+				Map<String, TestMethod> methods)
+			throws MissingDependencyException
+		{
+		ListIterator<String> it = m_hdMethods.listIterator();
 		while (it.hasNext())
 			{
 			String method = it.next();
@@ -425,7 +430,7 @@ public class TestMethod extends DepLink
 	//---------------------------------------------------------------------------
 	public synchronized void resetStatus()
 		{
-		if (m_status != null)
+		if ((m_status != null) && (!m_status.equals(STATUS_NOT_RAN)))
 			{
 			m_status = null;
 			m_hardObservers.reset();

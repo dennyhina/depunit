@@ -58,7 +58,7 @@ Loop at the end
 		</tests>
 	</run> -->
 	
-	<run name="Repeat run with cleanup">
+	<!-- <run name="Repeat run with cleanup">
 		<classes>
 			<class name="RepeatCleanup">
 				<driver>
@@ -72,6 +72,25 @@ Loop at the end
 			</class>
 		</classes>
 		
+	</run> -->
+	
+	<run name="Repeat run with cleanup">
+		<classes>
+			<class name="RepeatCleanup">
+				<driver>
+					<data>
+						<value name="MyData">Here is my data</value>
+					</data>
+					<data>
+						<value name="MyData">Here is my data2</value>
+					</data>
+				</driver>
+			</class>
+			<class name="TestDependOnDataDriver" />
+		</classes>
+		<tests>
+			<method>TestDependOnDataDriver.myTest</method>
+		</tests>
 	</run>
 	
 	<!-- <run name="Repeat run">

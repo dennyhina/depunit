@@ -374,7 +374,8 @@ public class DepUnit
 			while (it.hasNext())
 				{
 				TestMethod tm = it.next();
-				out.println("  "+tm.getFullName());
+				if (tm != null)
+					out.println("  "+tm.getFullName());
 				}
 			}
 			
@@ -383,10 +384,14 @@ public class DepUnit
 			m_targetBucket.put(tm.getFullName(), tm);
 			
 		/*
-		The next three steps need to be done seperately so recursive dependencies 
+		The next four steps need to be done seperately so recursive dependencies 
 		are not introduced
 		*/
-			
+		
+		//Resolving the cleanup methods will add dependencies that must be set before proceeding
+		for (TestMethod tm : m_testMethods)  //Resolve all methods
+			tm.resolveCleanupMethods(m_tmBucket);
+		
 		//need to do this first before adding to process queue
 		for (TestMethod tm : m_testMethods)  //Resolve all methods
 			tm.resolveDependencies(m_groupBucket, m_tmBucket);
