@@ -160,7 +160,9 @@ public class ProcessQueue
 			}
 			
 		/* if (ret != null)
-			System.out.println("Returning "+ret.getFullName()); */
+			System.out.println("Returning "+ret.getFullName());
+		else
+			System.out.println("Returning null"); */
 			
 		return (ret);
 		}

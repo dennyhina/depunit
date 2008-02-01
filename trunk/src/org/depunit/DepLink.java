@@ -37,6 +37,9 @@ public abstract class DepLink implements Observer
 			return (ret);
 			}
 			
+		/**
+			Called after a dependecy has been ran
+		*/
 		public void notifyObservers(String status)
 			{
 			setChanged();
@@ -44,6 +47,9 @@ public abstract class DepLink implements Observer
 			clearChanged();
 			}
 			
+		/**
+			Called to reset all tests that depend on this
+		*/
 		public void reset()
 			{
 			setChanged();

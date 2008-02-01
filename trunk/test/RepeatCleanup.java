@@ -31,6 +31,12 @@ public class RepeatCleanup
 		//out.println("testTwo");
 		}
 		
+	@Test(
+		hardDependencyOn = { "testTwo" } )
+	public void afterTestTwo()
+		{
+		}
+		
 	@Test
 		//( hardDependencyOn = { "testOne" } )
 	public void testThree()
