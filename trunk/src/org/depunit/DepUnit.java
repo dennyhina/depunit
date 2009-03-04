@@ -104,7 +104,7 @@ public class DepUnit
 		{
 		out.println("DepUnit version X");
 		out.println("Usage: java -jar depunit.jar [-e][-v] [-r <report file>] [-s <stylesheet>]");
-		out.println("      ([-x <xml file> [-x ...] -t <tag> [-t ...]]|([-c <test class> [-c ...]]");
+		out.println("      ([-x <xml file> [-x ...] [-t <tag> [-t ...]]]|([-c <test class> [-c ...]]");
 		out.println("      [<target method> ...]))");
 		out.println("  -e: Runs DepUnit in regression mode.");
 		out.println("  -r: Name of the xml report file to generate.");
@@ -182,6 +182,7 @@ public class DepUnit
 			int verbosity = 0;
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setValidating(false);
+			dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document xmldoc = db.parse(new File(xmlFile));
 			
@@ -493,7 +494,12 @@ public class DepUnit
 				tm.setStatus(TestResult.STATUS_FAILED);
 				tr.setStatus(TestResult.STATUS_FAILED);
 				tr.setException(t);
-				System.out.println(tm.printStack(t));
+				while (t != null)
+					{
+					System.out.println("Cause:");
+					System.out.println(tm.printStack(t));
+					t = t.getCause();
+					}
 				}
 			
 			
