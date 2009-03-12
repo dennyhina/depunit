@@ -73,8 +73,12 @@ tests will be ran once for each data element.
 
 <!-- 
 This element is used to specify specific tests to be ran
+
+The optional pattern attribute is a regular expression for matching 
+test methods to run
 -->
-<!ELEMENT tests (method+)>
+<!ELEMENT tests (method*)>
+	<!ATTLIST tests pattern CDATA #IMPLIED>
 
 <!-- 
 The method element is the full name of the test method to be ran.  If the test
