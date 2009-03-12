@@ -12,6 +12,17 @@ Loop at the end
 		<class name="LoginTestPart2"/>
 	</classGroup>
 	
+	<run name="Pattern run">
+		<classes>
+			<class name="CleanupTest"/>
+			<class name="LoginTest"/>
+			<class name="LoginTestPart2"/>
+			<class name="Project"/>
+		</classes>
+		
+		<tests pattern="Project\.create.*"/>
+	</run>
+	
 	<!-- <run name="Data Driver Run">
 		<classes>
 			<class name="DataDriverTest">

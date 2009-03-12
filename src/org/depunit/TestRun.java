@@ -108,9 +108,9 @@ public class TestRun
 		
 	
 		
-		
 	private Map<String, ClassConfig> m_classes;
 	private List<MethodConfig> m_methods;
+	private String m_pattern;                   //Regex pattern for matching test methods
 	private XPath m_xpath;
 	
 	public TestRun(List<String> classes, List<String> methods)
@@ -163,6 +163,10 @@ public class TestRun
 		Element tests = getElement(e, "tests");
 		if (tests != null)
 			{
+			m_pattern = tests.getAttribute("pattern");
+			if ("".equals(m_pattern))
+				m_pattern = null;
+			
 			nl = tests.getElementsByTagName("method");
 			for (int I = 0; I < nl.getLength(); I++)
 				m_methods.add(new MethodConfig(nl.item(I).getFirstChild().getNodeValue()));
@@ -177,6 +181,11 @@ public class TestRun
 	public List<MethodConfig> getMethods()
 		{
 		return (m_methods);
+		}
+		
+	public String getPattern()
+		{
+		return (m_pattern);
 		}
 		
 	}

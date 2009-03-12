@@ -28,6 +28,11 @@ public class Project
 		}
 		
 	@Test
+	public void plainTestMethod()
+		{
+		}
+		
+	@Test
 	public void deleteCompany()
 		{
 		}
