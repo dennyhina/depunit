@@ -183,7 +183,7 @@ public class DepUnit
 			int verbosity = 0;
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			dbf.setValidating(false);
-			dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
+			//dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document xmldoc = db.parse(new File(xmlFile));
 			
