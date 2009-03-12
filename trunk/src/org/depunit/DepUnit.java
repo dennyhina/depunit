@@ -5,6 +5,7 @@ import java.lang.reflect.*;
 import java.lang.annotation.*;
 import org.depunit.annotations.*;
 import java.util.*;
+import java.util.regex.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import java.io.*;
@@ -315,11 +316,15 @@ public class DepUnit
 		
 		List<TestMethod> targetList;
 		List<TestRun.MethodConfig> methods = testRun.getMethods();
-		if (methods.size() == 0)
+		String pattern = testRun.getPattern();
+		
+		if ((methods.size() == 0) && (pattern == null))
 			targetList = getTestMethods("*");
 		else
-			{
 			targetList = new ArrayList<TestMethod>();
+			
+		if (methods.size() != 0)
+			{
 			for (TestRun.MethodConfig m : methods)
 				{
 				targetList.addAll(getTestMethods(m.getName()));
@@ -327,6 +332,9 @@ public class DepUnit
 				//to the TestMethod class
 				}
 			}
+		
+		if (pattern != null)
+			targetList.addAll(getTestMethodsFromPattern(pattern));
 			
 		createProcessQueue(targetList);
 		}
@@ -336,6 +344,22 @@ public class DepUnit
 		{
 		out.println("Debug = "+debug);
 		m_debug = debug;
+		}
+		
+	//---------------------------------------------------------------------------
+	public List<TestMethod> getTestMethodsFromPattern(String pattern)
+		{
+		List<TestMethod> retList = new ArrayList<TestMethod>();
+		
+		Pattern pat = Pattern.compile(pattern);
+		
+		for (TestMethod tm : m_testMethods)
+			{
+			if (pat.matcher(tm.getFullName()).matches())
+				retList.add(tm);
+			}
+			
+		return (retList);
 		}
 		
 	//---------------------------------------------------------------------------
