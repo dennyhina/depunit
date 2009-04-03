@@ -154,6 +154,47 @@ public class TestMethod extends DepLink
 				m_depCount ++;
 			}
 		}
+	
+	//---------------------------------------------------------------------------
+	private void expandGroupNames(ListIterator<String> it, 
+			Map<String, List<TestMethod> > groupBucket)
+		{
+		while (it.hasNext())
+			{
+			String method = it.next();
+			
+			//Checks to see if the name is a group
+			List<TestMethod> group = groupBucket.get(method);
+			if (group != null)
+				{
+				it.remove(); //Remove group name
+				for (TestMethod tm : group)
+					{
+					it.add(tm.getFullName());  //Add members of group
+					//m_hardDependencies.add(tm);
+					if (tm.addHardObserver(this))
+						m_depCount ++;
+					}
+				}
+			}
+		}
+		
+	//---------------------------------------------------------------------------
+	private TestMethod resolveMethod(String method, Map<String, TestMethod> methods)
+		{
+		//Check to see if name is only partial
+		TestMethod tm = methods.get(m_testClass.getFullName()+"."+method);
+		
+		//Check for class in same package
+		if (tm == null)
+			tm = methods.get(m_testClass.getPackage()+"."+method);
+			
+		//Check for exact name	
+		if (tm == null)
+			tm = methods.get(method);
+			
+		return (tm);
+		}
 		
 	//---------------------------------------------------------------------------
 	public void resolveCleanupMethods(Map<String, TestMethod> methods)
@@ -170,7 +211,7 @@ public class TestMethod extends DepLink
 				it.set(method);
 				}
 			else if (methods.get(method) == null)
-				throw new MissingDependencyException(method);
+				throw new MissingDependencyException(this, method);
 				
 			TestMethod tm = methods.get(method);
 			//Instead call special method
@@ -184,78 +225,43 @@ public class TestMethod extends DepLink
 			throws MissingDependencyException
 		{
 		ListIterator<String> it = m_hdMethods.listIterator();
+		expandGroupNames(it, groupBucket);
+		
+		it = m_hdMethods.listIterator(); //reset the iterator
 		while (it.hasNext())
 			{
 			String method = it.next();
 			
-			//Check to see if it is a group first
-			List<TestMethod> group = groupBucket.get(method);
-			if (group != null)
+			TestMethod resMethod = resolveMethod(method, methods);
+			
+			if (resMethod != null)
 				{
-				it.remove(); //Remove group name
-				for (TestMethod tm : group)
-					{
-					it.add(tm.getFullName());  //Add members of group
-					//m_hardDependencies.add(tm);
-					if (tm.addHardObserver(this))
-						m_depCount ++;
-					}
+				it.set(resMethod.getFullName());  //just in case it changed
+				if (resMethod.addHardObserver(this))
+					m_depCount ++;
 				}
 			else
-				{ //Check to see if name is only partial
-				TestMethod tm = methods.get(m_testClass.getFullName()+"."+method);
-				if (tm != null)
-					{
-					it.set(m_testClass.getFullName()+"."+method);
-					//m_hardDependencies.add(tm);
-					if (tm.addHardObserver(this))
-						m_depCount ++;
-					}
-				else if ((tm = methods.get(method)) != null)
-					//m_hardDependencies.add(tm);
-					if (tm.addHardObserver(this))
-						m_depCount ++;
-				else
-					throw new MissingDependencyException(method);
-				}
+				throw new MissingDependencyException(this, method);
 			}
 			
 		
+		it = m_sdMethods.listIterator();
+		expandGroupNames(it, groupBucket);
 		it = m_sdMethods.listIterator();
 		while (it.hasNext())
 			{
 			String method = it.next();
 			
-			//Check to se if it is a group first
-			List<TestMethod> group = groupBucket.get(method);
-			if (group != null)
+			TestMethod resMethod = resolveMethod(method, methods);
+			
+			if (resMethod != null)
 				{
-				it.remove(); //Remove group name
-				for (TestMethod tm : group)
-					{
-					it.add(tm.getFullName());  //Add members of group
-					//m_softDependencies.add(tm);
-					if (tm.addSoftObserver(this))
-						m_depCount ++;
-					}
+				it.set(resMethod.getFullName());  //just in case it changed
+				if (resMethod.addSoftObserver(this))
+					m_depCount ++;
 				}
 			else
-				{
-				TestMethod tm = methods.get(m_testClass.getFullName()+"."+method);
-				if (tm != null)
-					{
-					it.set(m_testClass.getFullName()+"."+method);
-					//m_softDependencies.add(tm);
-					if (tm.addSoftObserver(this))
-						m_depCount ++;
-					}
-				else if ((tm = methods.get(method)) != null)
-					//m_softDependencies.add(tm);
-					if (tm.addSoftObserver(this))
-						m_depCount ++;
-				else
-					throw new MissingDependencyException(method);
-				}
+				throw new MissingDependencyException(this, method);
 			}
 		}
 		
