@@ -12,7 +12,7 @@ Loop at the end
 		<class name="LoginTestPart2"/>
 	</classGroup>
 	
-	<run name="Pattern run">
+	<!-- <run name="Pattern run">
 		<classes>
 			<class name="CleanupTest"/>
 			<class name="LoginTest"/>
@@ -21,6 +21,12 @@ Loop at the end
 		</classes>
 		
 		<tests pattern="Project\.create.*"/>
+	</run> -->
+	
+	<run name="Package Test">
+		<classes>
+			<class name="testpackage.Test1"/>
+		</classes>
 	</run>
 	
 	<!-- <run name="Data Driver Run">
@@ -85,7 +91,7 @@ Loop at the end
 		
 	</run> -->
 	
-	<run name="Repeat run with cleanup">
+	<!-- <run name="Repeat run with cleanup">
 		<classes>
 			<class name="RepeatCleanup">
 				<driver>
@@ -102,7 +108,7 @@ Loop at the end
 		<tests>
 			<method>TestDependOnDataDriver.myTest</method>
 		</tests>
-	</run>
+	</run> -->
 	
 	<!-- <run name="Repeat run">
 		<classes>

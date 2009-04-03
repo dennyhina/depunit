@@ -39,7 +39,7 @@ public class TestClass
 	private Object m_classInstance;
 	private LinkedList<Method> m_beforeTest;
 	private LinkedList<Method> m_afterTest;
-	private String m_fullName;
+	//private String m_fullName;
 	private LinkedList<TestMethod> m_testMethods;
 	//private Map<String, String> m_initParams;
 	private DataDriver m_dataDriver;
@@ -59,12 +59,12 @@ public class TestClass
 		
 		m_class = Class.forName(className);
 		
-		Package p = m_class.getPackage();
+		/* Package p = m_class.getPackage();
 		m_fullName = "";
 		if (p != null)
 			m_fullName = p.getName()+".";
 			
-		m_fullName += m_class.getName();
+		m_fullName = m_class.getName(); */
 		
 		Method[] methods = m_class.getMethods();
 		for (Method m : methods)
@@ -138,9 +138,15 @@ public class TestClass
 		}
 	
 	//---------------------------------------------------------------------------
+	public String getPackage()
+		{
+		return (m_class.getPackage().getName());
+		}
+	
+	//---------------------------------------------------------------------------
 	public String getFullName()
 		{
-		return (m_fullName);
+		return (m_class.getName());
 		}
 		
 	//---------------------------------------------------------------------------

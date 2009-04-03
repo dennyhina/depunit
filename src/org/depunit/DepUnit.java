@@ -342,7 +342,7 @@ public class DepUnit
 	//===========================================================================
 	public void setDebug(boolean debug)
 		{
-		out.println("Debug = "+debug);
+		//out.println("Debug = "+debug);
 		m_debug = debug;
 		}
 		
@@ -595,7 +595,7 @@ public class DepUnit
 			{
 			TestMethod m = m_tmBucket.get(dep);
 			if (m == null)
-				throw new MissingDependencyException(dep);
+				throw new MissingDependencyException(method, dep);
 			addToProcessQueue(m);
 			}
 			
