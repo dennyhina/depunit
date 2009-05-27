@@ -140,7 +140,10 @@ public class TestClass
 	//---------------------------------------------------------------------------
 	public String getPackage()
 		{
-		return (m_class.getPackage().getName());
+		if (m_class.getPackage() == null)
+			return (null);
+		else
+			return (m_class.getPackage().getName());
 		}
 	
 	//---------------------------------------------------------------------------
