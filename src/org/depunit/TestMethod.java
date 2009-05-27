@@ -186,7 +186,7 @@ public class TestMethod extends DepLink
 		TestMethod tm = methods.get(m_testClass.getFullName()+"."+method);
 		
 		//Check for class in same package
-		if (tm == null)
+		if ((tm == null) && (m_testClass.getPackage() != null))
 			tm = methods.get(m_testClass.getPackage()+"."+method);
 			
 		//Check for exact name	
