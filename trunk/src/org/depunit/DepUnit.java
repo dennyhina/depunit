@@ -82,7 +82,7 @@ public class DepUnit
 		}
 	
 	//---------------------------------------------------------------------------
-	private static Document createResultDocument()
+	/* package */ static Document createResultDocument()
 		{
 		Document doc = null;
 		
@@ -175,7 +175,7 @@ public class DepUnit
 		}
 		
 	//---------------------------------------------------------------------------
-	private static int runSuite(String xmlFile, Document results, ArrayList<String> tagList)
+	/* package */ static int runSuite(String xmlFile, Document results, ArrayList<String> tagList)
 		{
 		int failCount = 0;
 		try
