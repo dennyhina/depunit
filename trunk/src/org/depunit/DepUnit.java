@@ -44,7 +44,7 @@ public class DepUnit
 		public String styleSheet;
 		public List<String> xmlList;
 		public ArrayList<String> tagList;
-		
+	
 		public CommandLine()
 			{
 			help = false;
@@ -59,27 +59,6 @@ public class DepUnit
 			}
 		}
 		
-		
-	//---------------------------------------------------------------------------
-	private static void writeResults(Document doc, String reportFile, String styleSheet)
-		{
-		try
-			{
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer trans;
-			if (styleSheet != null)
-				trans = tf.newTransformer(new StreamSource(new File(styleSheet)));
-			else
-				trans = tf.newTransformer();
-				
-			trans.setOutputProperty("indent", "yes");
-			trans.transform(new DOMSource(doc), new StreamResult(new File(reportFile)));
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			}
-		}
 	
 	//---------------------------------------------------------------------------
 	/* package */ static Document createResultDocument()
@@ -123,7 +102,8 @@ public class DepUnit
 			throws Exception
 		{
 		int failCount = 0;
-		cl = new CommandLine();
+		DepUnit du = new DepUnit();
+		CommandLine cl = new CommandLine();
 		ArgumentProcessor proc = new ArgumentProcessor(PARAMETERS);
 		proc.processArgs(args, cl);
 		
@@ -132,36 +112,35 @@ public class DepUnit
 			printHelp();
 			return;
 			}
+			
+		du.setDebug(cl.debug);
+		du.setRegression(cl.regression);
+		du.setReportFile(cl.reportFile);
+		du.setStyleSheet(cl.styleSheet);
+		du.setTagList(cl.tagList);
 		
 		Document doc = createResultDocument();
 		if (cl.xmlList.size() > 0)
 			{
 			for (String xmlFile : cl.xmlList)
 				{
-				failCount += runSuite(xmlFile, doc, cl.tagList);
+				failCount += du.runSuite(xmlFile);
 				//Have a bailout switch when fail occurs
 				}
 			}
 		else
 			{
-			DepUnit du = new DepUnit(new TestRun(cl.classList, cl.targetMethods), cl.debug);
-			
-			//Could call this from a Thread class using multiple threads
-			du.run();
-		
-			du.writeReport("", doc);
-			
-			failCount = du.getFailedCount();
+			failCount = du.runTest(cl.classList, cl.targetMethods);
 			}
 			
 		if (cl.reportFile != null)
 			{
-			writeResults(doc, cl.reportFile, cl.styleSheet);
+			du.writeResults(cl.reportFile, cl.styleSheet);
 			}
 			
 		if (cl.regression)
 			{
-			writeResults(doc, REGRESSION_FILE, null);
+			du.writeResults(REGRESSION_FILE, null);
 			}
 			
 		if (failCount == 0)
@@ -171,11 +150,61 @@ public class DepUnit
 				regressionFile.delete();
 			}
 			
+		if (failCount != 0)
+			System.out.println(failCount+" test(s) failed");
+			
 		System.exit(failCount);
 		}
 		
-	//---------------------------------------------------------------------------
-	/* package */ static int runSuite(String xmlFile, Document results, ArrayList<String> tagList)
+	
+	//===========================================================================
+	//private HashSet<TestMethod> m_queueLookup;
+	//private Queue<TestMethod> m_processQueue;
+	//private List<TestMethod> m_reportList;  //Contains the same as m_processQueue, used for reporting
+	private ProcessQueue m_processQueue;
+	private Queue<TestResult> m_resultList;
+	private HashMap<String, TestMethod> m_tmBucket;
+	private HashMap<String, TestMethod> m_targetBucket;
+	private HashMap<String, List<TestMethod> > m_groupBucket;
+	private List<TestMethod> m_testMethods;
+	private Stack<TestMethod> m_cleanupStack;
+	private Map<String, Object> m_runParams;
+	private int m_verbosity;
+	
+	private Document m_resultDoc;
+	
+	private boolean m_help;
+	private boolean m_debug;
+	private boolean m_regression;
+	private String m_reportFile;
+	private String m_styleSheet;
+	private List<String> m_tagList;
+	private ClassLoader m_classLoader;
+	
+	public DepUnit()
+		{
+		m_help = false;
+		m_regression = false;
+		m_reportFile = null;
+		m_styleSheet = null;
+		m_debug = false;
+		m_tagList = new ArrayList<String>();
+		
+		m_resultDoc = createResultDocument();
+		m_classLoader = this.getClass().getClassLoader();
+		}
+		
+	public void setRegression(boolean regres) { m_regression = regres; }
+	//public void setClassList(List<String> cl) { m_classList = cl; }
+	//public void setTargetMethods(List<String> tm) { m_targetMethods = tm; }
+	public void setReportFile(String file) { m_reportFile = file; }
+	public void setStyleSheet(String style) { m_styleSheet = style; }
+	//public void setXmlList(List<String> xmlList) { m_xmlList = xmlList; }
+	public void setTagList(List<String> tagList) { m_tagList = tagList; }
+	public void setClassLoader(ClassLoader cl) { m_classLoader = cl; }
+	
+	public int runSuite(String xmlFile)
+			throws ClassNotFoundException, MissingDependencyException, Exception
 		{
 		int failCount = 0;
 		try
@@ -207,7 +236,7 @@ public class DepUnit
 				List<TestRun.ClassConfig> classList = new ArrayList<TestRun.ClassConfig>();
 				
 				for (int J = 0; J < cnl.getLength(); J++)
-					classList.add(new TestRun.ClassConfig((Element)cnl.item(J)));
+					classList.add(new TestRun.ClassConfig((Element)cnl.item(J), m_classLoader));
 					
 				classGroups.put(groupName, classList);
 				}
@@ -220,14 +249,14 @@ public class DepUnit
 				String runName = run.getAttribute("name");
 				
 				//Look for tags
-				if (tagList.size() > 0)
+				if (m_tagList.size() > 0)
 					{
 					boolean proceed = false;
 					NodeList tagNList = run.getElementsByTagName("tag");
 					for (int i = 0; i < tagNList.getLength(); i++)
 						{
 						String tag = tagNList.item(i).getFirstChild().getNodeValue();
-						if (tagList.contains(tag))
+						if (m_tagList.contains(tag))
 							{
 							//We will only run the "run" if it has a tag that was specified
 							proceed = true;
@@ -239,14 +268,12 @@ public class DepUnit
 						continue;
 					}
 				
-				DepUnit du = new DepUnit(new TestRun(run, classGroups), cl.debug);
-				du.setVerbosity(verbosity);
-				
+				setVerbosity(verbosity);
 				if (verbosity > 0)
 					System.out.println("Test Run: "+runName);
-				du.run();
-				du.writeReport(runName, results);
-				failCount += du.getFailedCount();
+				runTest(new TestRun(run, classGroups, m_classLoader));
+				
+				failCount += getFailedCount();
 				}
 			}
 		catch (InitializationException ie)
@@ -259,7 +286,7 @@ public class DepUnit
 			else
 				System.out.println(ie);
 			}
-		catch (XMLException xmle)
+		/* catch (XMLException xmle)
 			{
 			System.out.println(xmle);
 			}
@@ -267,30 +294,22 @@ public class DepUnit
 			{
 			System.out.println(e);
 			e.printStackTrace();
-			}
+			} */
 			
 		return (failCount);
 		}
-	
-	//===========================================================================
-	//private HashSet<TestMethod> m_queueLookup;
-	//private Queue<TestMethod> m_processQueue;
-	//private List<TestMethod> m_reportList;  //Contains the same as m_processQueue, used for reporting
-	private ProcessQueue m_processQueue;
-	private Queue<TestResult> m_resultList;
-	private HashMap<String, TestMethod> m_tmBucket;
-	private HashMap<String, TestMethod> m_targetBucket;
-	private HashMap<String, List<TestMethod> > m_groupBucket;
-	private List<TestMethod> m_testMethods;
-	private Stack<TestMethod> m_cleanupStack;
-	private Map<String, Object> m_runParams;
-	private int m_verbosity;
-	private boolean m_debug;
-	
-	public DepUnit(TestRun testRun, boolean debug)
+		
+	//---------------------------------------------------------------------------
+	public int runTest(List<String> classList, List<String> methodList)
 			throws ClassNotFoundException, MissingDependencyException
 		{
-		setDebug(debug);
+		return (runTest(new TestRun(classList, methodList)));
+		}
+		
+	//---------------------------------------------------------------------------
+	public int runTest(TestRun testRun)
+			throws ClassNotFoundException, MissingDependencyException
+		{
 		//System.out.println("New DepUnit");
 		m_verbosity = 0;
 		//m_queueLookup = new HashSet<TestMethod>();
@@ -337,6 +356,23 @@ public class DepUnit
 			targetList.addAll(getTestMethodsFromPattern(pattern));
 			
 		createProcessQueue(targetList);
+		
+		//Could call this from a Thread class using multiple threads
+		run();
+		
+		writeReport(testRun.getTestName());
+		
+		return (getFailedCount());
+		}
+		
+	public void runObjectTests(Object testObject)
+		{
+		}
+		
+	public DepUnit(TestRun testRun, boolean debug)
+			throws ClassNotFoundException, MissingDependencyException
+		{
+		
 		}
 		
 	//===========================================================================
@@ -387,7 +423,7 @@ public class DepUnit
 		}
 		
 	//---------------------------------------------------------------------------
-	public void createProcessQueue(List<TestMethod> targetMethods)
+	private void createProcessQueue(List<TestMethod> targetMethods)
 			throws MissingDependencyException
 		{
 		Set<String> cleanupSet = new HashSet<String>();
@@ -450,6 +486,7 @@ public class DepUnit
 	//---------------------------------------------------------------------------
 	public void run()
 		{
+		System.out.println("Running test");
 		TestMethod tm;
 		while ((tm = m_processQueue.getNextMethod()) != null)
 			{
@@ -556,7 +593,7 @@ public class DepUnit
 	private void addClass(String className, DataDriver dd)
 			throws ClassNotFoundException
 		{
-		TestClass tc = new TestClass(className);
+		TestClass tc = new TestClass(className, m_classLoader);
 		tc.setDataDriver(dd);
 		List<TestMethod> methods = tc.getTestMethods();
 		
@@ -633,11 +670,11 @@ public class DepUnit
 		
 	//---------------------------------------------------------------------------
 	//public void writeReport(String fileName, String styleSheet)
-	public void writeReport(String runName, Document doc)
+	public void writeReport(String runName)
 		{
 		try
 			{
-			Element root = doc.getDocumentElement();
+			Element root = m_resultDoc.getDocumentElement();
 			
 			int total = m_testMethods.size();
 			int passed = 0;
@@ -658,7 +695,7 @@ public class DepUnit
 					not_ran ++;
 				}
 				
-			Element run = doc.createElement("run");
+			Element run = m_resultDoc.createElement("run");
 			root.appendChild(run);
 			run.setAttribute("name", runName);
 			run.setAttribute("total", String.valueOf(total));
@@ -669,9 +706,9 @@ public class DepUnit
 			
 			for (TestResult tr : m_resultList)
 				{
-				Element test = doc.createElement("test");
+				Element test = m_resultDoc.createElement("test");
 				
-				tr.reportStatus(doc, test);
+				tr.reportStatus(m_resultDoc, test);
 				
 				run.appendChild(test);
 				}
@@ -684,5 +721,27 @@ public class DepUnit
 			}
 			
 		}
+		
+	//---------------------------------------------------------------------------
+	public void writeResults(String reportFile, String styleSheet)
+		{
+		try
+			{
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer trans;
+			if (styleSheet != null)
+				trans = tf.newTransformer(new StreamSource(new File(styleSheet)));
+			else
+				trans = tf.newTransformer();
+				
+			trans.setOutputProperty("indent", "yes");
+			trans.transform(new DOMSource(m_resultDoc), new StreamResult(new File(reportFile)));
+			}
+		catch (Exception e)
+			{
+			e.printStackTrace();
+			}
+		}
+		
 	}
 
