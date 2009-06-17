@@ -44,7 +44,7 @@ public class TestClass
 	//private Map<String, String> m_initParams;
 	private DataDriver m_dataDriver;
 	
-	public TestClass(String className)
+	public TestClass(String className, ClassLoader classLoader)
 			throws ClassNotFoundException
 		{
 		m_dataDriver = null;
@@ -57,7 +57,7 @@ public class TestClass
 		List<TestMethod> beforeClass = new LinkedList<TestMethod>();
 		List<TestMethod> afterClass = new LinkedList<TestMethod>();
 		
-		m_class = Class.forName(className);
+		m_class = Class.forName(className, true, classLoader);
 		
 		/* Package p = m_class.getPackage();
 		m_fullName = "";

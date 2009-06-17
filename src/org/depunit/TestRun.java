@@ -23,7 +23,7 @@ public class TestRun
 			m_dataDriver = null;
 			}
 			
-		public ClassConfig(Element e)
+		public ClassConfig(Element e, ClassLoader classLoader)
 				throws XMLException, InitializationException
 			{
 			m_params = null;
@@ -39,7 +39,7 @@ public class TestRun
 					{
 					try
 						{
-						Class driverClass = Class.forName(driver.getAttribute("class"));
+						Class driverClass = Class.forName(driver.getAttribute("class"), true, classLoader);
 						m_dataDriver = (DataDriver)driverClass.newInstance();
 						}
 					catch (ClassNotFoundException cnfe)
@@ -112,9 +112,11 @@ public class TestRun
 	private List<MethodConfig> m_methods;
 	private String m_pattern;                   //Regex pattern for matching test methods
 	private XPath m_xpath;
+	private String m_testName;
 	
 	public TestRun(List<String> classes, List<String> methods)
 		{
+		m_testName = "";
 		m_classes = new HashMap<String, ClassConfig>();
 		m_methods = new ArrayList<MethodConfig>();
 		
@@ -134,11 +136,12 @@ public class TestRun
 			return ((Element)nl.item(0));
 		}
 		
-	public TestRun(Element e, Map<String, List<ClassConfig>> classGroups)
+	public TestRun(Element e, Map<String, List<ClassConfig>> classGroups, ClassLoader classLoader)
 			throws XMLException, InitializationException
 		{
 		m_classes = new HashMap<String, ClassConfig>();
 		m_methods = new ArrayList<MethodConfig>();
+		m_testName = e.getAttribute("name");
 		
 		Element classes = getElement(e, "classes");
 		if (classes == null)
@@ -156,7 +159,7 @@ public class TestRun
 		nl = classes.getElementsByTagName("class");
 		for (int I = 0; I < nl.getLength(); I++)
 			{
-			ClassConfig cc = new ClassConfig((Element)nl.item(I));
+			ClassConfig cc = new ClassConfig((Element)nl.item(I), classLoader);
 			m_classes.put(cc.getName(), cc);
 			}
 			
@@ -171,6 +174,11 @@ public class TestRun
 			for (int I = 0; I < nl.getLength(); I++)
 				m_methods.add(new MethodConfig(nl.item(I).getFirstChild().getNodeValue()));
 			}
+		}
+		
+	public String getTestName()
+		{
+		return (m_testName);
 		}
 		
 	public Collection<ClassConfig> getClasses()

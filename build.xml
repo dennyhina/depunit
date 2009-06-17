@@ -1,0 +1,21 @@
+<project name="depunit" basedir="." default="compile">
+
+	<path id="cpmake-path">
+		<pathelement location="tools/cpmake.jar"/>
+		<pathelement location="tools/bsh-2.0b4.jar"/>
+	</path>
+
+	<target name="clean" description="Cleans build area">
+		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
+				failonerror="true">
+			<arg value="clean"/>
+		</java>
+	</target>
+	
+	<target name="compile" description="Cleans build area">
+		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
+				failonerror="true">
+		</java>
+	</target>
+
+</project>
