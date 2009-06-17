@@ -91,7 +91,7 @@ public class DepUnit
 		out.println("  -s: Stylesheet to use to style the report.");
 		out.println("  -x: XML input file that defines a suite of test runs.");
 		out.println("  -c: Test class to include in the run.");
-		out.println("  -t: Only test runs marked with this tag will run.");
+		out.println("  -t: Only test runs marked with this tag will run.  This can also be a comma seperated list.");
 		out.println("  target methods: Specific test methods to run.");
 		}
 		
@@ -117,8 +117,19 @@ public class DepUnit
 		du.setRegression(cl.regression);
 		du.setReportFile(cl.reportFile);
 		du.setStyleSheet(cl.styleSheet);
-		du.setTagList(cl.tagList);
-		
+		if (cl.tagList.size() == 1)
+			{
+			String[] tagSplit = cl.tagList.get(0).split(",");
+			ArrayList<String> tags = new ArrayList();
+			for (String t : tagSplit)
+				if (t.trim().length() > 0)
+					tags.add(t);
+				
+			du.setTagList(tags);
+			}
+		else
+			du.setTagList(cl.tagList);
+			
 		Document doc = createResultDocument();
 		if (cl.xmlList.size() > 0)
 			{
@@ -297,6 +308,17 @@ public class DepUnit
 			} */
 			
 		return (failCount);
+		}
+		
+	//---------------------------------------------------------------------------
+	public int runTest(Class klass)
+			throws ClassNotFoundException, MissingDependencyException
+		{
+		ArrayList<String> classList = new ArrayList<String>();
+		ArrayList<String> methodList = new ArrayList<String>();
+		
+		classList.add(klass.getName());
+		return (runTest(classList, methodList));
 		}
 		
 	//---------------------------------------------------------------------------
@@ -524,7 +546,17 @@ public class DepUnit
 				if (m_debug)
 					{
 					System.out.println("OBJECT CREATION EXCEPTION");
+					tm.setStatus(TestResult.STATUS_FAILED);
+					tr.setStatus(TestResult.STATUS_FAILED);
 					oce.printStackTrace(System.out);
+					Throwable t = oce.getCause();
+					while (t != null)
+						{
+						System.out.println("Cause:");
+						System.out.println(t.getMessage());
+						System.out.println(tm.printStack(t));
+						t = t.getCause();
+						}
 					}
 				//Could not instanciate object
 				}
