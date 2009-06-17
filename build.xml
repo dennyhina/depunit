@@ -12,9 +12,16 @@
 		</java>
 	</target>
 	
-	<target name="compile" description="Cleans build area">
+	<target name="compile" description="Compiles project">
 		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
 				failonerror="true">
+		</java>
+	</target>
+	
+	<target name="test" description="Runs unit tests">
+		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
+				failonerror="true">
+			<arg value="test"/>
 		</java>
 	</target>
 
