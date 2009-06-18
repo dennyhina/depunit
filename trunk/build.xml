@@ -4,7 +4,12 @@
 		<pathelement location="tools/cpmake.jar"/>
 		<pathelement location="tools/bsh-2.0b4.jar"/>
 	</path>
+	
+	<taskdef name="banner" classname="cpmake.AntPlugin">
+		<classpath refid="cpmake-path"/>
+	</taskdef>
 
+	
 	<target name="clean" description="Cleans build area">
 		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
 				failonerror="true">
@@ -13,9 +18,13 @@
 	</target>
 	
 	<target name="compile" description="Compiles project">
+		<banner banner="false"/>
 		<java classname="cpmake.CPMake" fork="true" classpathref="cpmake-path"
 				failonerror="true">
+			<arg value="-D"/>
+			<arg value="ADD_BANNER=true"/>
 		</java>
+		<banner banner="true"/>
 	</target>
 	
 	<target name="test" description="Runs unit tests">

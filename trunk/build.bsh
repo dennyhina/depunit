@@ -28,6 +28,8 @@ jp.setManifest("manifest.txt");
 jp.createRules();
 jp.setDefaultTarget();
 jp.getJarFile().addFiles(srcdir, "cpmake_plugin.bsh");
+if (make.getProperty("ADD_BANNER", "false").equals("true"))
+	jp.getCompiler().setBanner(" [javac] ");
 
 tstclasspath = jp.getClassPathObject();
 tstclasspath.addPath(testoutdir);

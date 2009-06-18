@@ -311,14 +311,21 @@ public class DepUnit
 		}
 		
 	//---------------------------------------------------------------------------
-	public int runTest(Class klass)
+	public int runTest(String testClass)
 			throws ClassNotFoundException, MissingDependencyException
 		{
 		ArrayList<String> classList = new ArrayList<String>();
 		ArrayList<String> methodList = new ArrayList<String>();
 		
-		classList.add(klass.getName());
+		classList.add(testClass);
 		return (runTest(classList, methodList));
+		}
+		
+	//---------------------------------------------------------------------------
+	public int runTest(Class klass)
+			throws ClassNotFoundException, MissingDependencyException
+		{
+		return (runTest(klass.getName()));
 		}
 		
 	//---------------------------------------------------------------------------
