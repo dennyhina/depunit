@@ -222,6 +222,7 @@ public class DepUnit
 			{
 			int verbosity = 0;
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			dbf.setValidating(false);
 			//dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -340,7 +341,7 @@ public class DepUnit
 			throws ClassNotFoundException, MissingDependencyException
 		{
 		//System.out.println("New DepUnit");
-		m_verbosity = 0;
+		//m_verbosity = 0;
 		//m_queueLookup = new HashSet<TestMethod>();
 		//m_processQueue = new ConcurrentLinkedQueue<TestMethod>();
 		//m_reportList = new ArrayList<TestMethod>();
@@ -544,6 +545,7 @@ public class DepUnit
 			
 				if (m_verbosity > 0)
 					System.out.println("  "+tm.getFullName());
+					
 				tm.callMethod(m_runParams);
 				tr.setStatus(TestResult.STATUS_SUCCESS);
 				tm.setStatus(TestMethod.STATUS_SUCCESS);
