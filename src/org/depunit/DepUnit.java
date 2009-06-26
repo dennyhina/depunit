@@ -222,7 +222,12 @@ public class DepUnit
 			{
 			int verbosity = 0;
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			try
+				{
+				dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+				}
+			catch (ParserConfigurationException pce) {}
+			
 			dbf.setValidating(false);
 			//dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
