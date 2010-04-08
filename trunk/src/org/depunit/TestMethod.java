@@ -185,9 +185,19 @@ public class TestMethod extends DepLink
 		//Check to see if name is only partial
 		TestMethod tm = methods.get(m_testClass.getFullName()+"."+method);
 		
+		//Check package list which is this class and all super classes
+		List<String> packageList = m_testClass.getPackageList();
+		for (String p : packageList)
+			{
+			if (tm != null)
+				break;
+				
+			tm = methods.get(p+"."+method);
+			}
+			
 		//Check for class in same package
-		if ((tm == null) && (m_testClass.getPackage() != null))
-			tm = methods.get(m_testClass.getPackage()+"."+method);
+		/* if ((tm == null) && (m_testClass.getPackage() != null))
+			tm = methods.get(m_testClass.getPackage()+"."+method); */
 			
 		//Check for exact name	
 		if (tm == null)

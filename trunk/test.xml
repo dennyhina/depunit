@@ -12,7 +12,7 @@ Loop at the end
 		<class name="LoginTestPart2"/>
 	</classGroup>
 	
-	<!-- <run name="Pattern run">
+	<run name="Pattern run">
 		<classes>
 			<class name="CleanupTest"/>
 			<class name="LoginTest"/>
@@ -21,7 +21,7 @@ Loop at the end
 		</classes>
 		
 		<tests pattern="Project\.create.*"/>
-	</run> -->
+	</run>
 	
 	<run name="Package Test">
 		<classes>
@@ -29,7 +29,7 @@ Loop at the end
 		</classes>
 	</run>
 	
-	<!-- <run name="Data Driver Run">
+	<run name="Data Driver Run">
 		<classes>
 			<class name="DataDriverTest">
 				<driver class="TestDataDriver"/>
@@ -56,11 +56,11 @@ Loop at the end
 		</classes>
 	</run>
 	
-	<run name="Fail run">
+	<!-- <run name="Fail run">
 		<classes>
 			<class name="UnitTest"/>
 		</classes>
-	</run>
+	</run> -->
 	
 	<run name="Second Run">
 		<classes>
@@ -73,9 +73,9 @@ Loop at the end
 		<tests>
 			<method>LoginTest.login</method>
 		</tests>
-	</run> -->
+	</run>
 	
-	<!-- <run name="Repeat run with cleanup">
+	<run name="Repeat run with cleanup">
 		<classes>
 			<class name="RepeatCleanup">
 				<driver>
@@ -89,9 +89,9 @@ Loop at the end
 			</class>
 		</classes>
 		
-	</run> -->
+	</run>
 	
-	<!-- <run name="Repeat run with cleanup">
+	<run name="Repeat run with cleanup">
 		<classes>
 			<class name="RepeatCleanup">
 				<driver>
@@ -108,9 +108,27 @@ Loop at the end
 		<tests>
 			<method>TestDependOnDataDriver.myTest</method>
 		</tests>
-	</run> -->
+	</run>
 	
-	<!-- <run name="Repeat run">
+	<run name="Repeat run with target method specified">
+		<classes>
+			<class name="RepeatCleanup">
+				<driver>
+					<data>
+						<value name="MyData">Here is my data</value>
+					</data>
+					<data>
+						<value name="MyData">Here is my data2</value>
+					</data>
+				</driver>
+			</class>
+		</classes>
+		<tests>
+			<method>RepeatCleanup.testTwo</method>
+		</tests>
+	</run>
+	
+	<run name="Repeat run">
 		<classes>
 			<class name="LoginTest">
 				<value name="UserName">Sammy</value>
@@ -130,7 +148,7 @@ Loop at the end
 			</class>
 		</classes>
 		
-	</run> -->
+	</run>
 	
 	<!-- <run name="fail login">
 		<classes>
