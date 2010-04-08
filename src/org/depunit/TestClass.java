@@ -138,14 +138,33 @@ public class TestClass
 		}
 	
 	//---------------------------------------------------------------------------
-	public String getPackage()
+	/* public String getPackage()
 		{
 		if (m_class.getPackage() == null)
 			return (null);
 		else
 			return (m_class.getPackage().getName());
-		}
+		} */
 	
+	public List<String> getPackageList()
+		{
+		List<String> ret = new ArrayList<String>();
+		Class c = m_class;
+		
+		while (c != null)
+			{
+			//Iterate through super classes and return packages
+			if (c.getPackage() == null)
+				ret.add("");
+			else
+				ret.add(c.getPackage().getName());
+				
+			c = c.getSuperclass();
+			}
+			
+		return (ret);
+		}
+
 	//---------------------------------------------------------------------------
 	public String getFullName()
 		{
