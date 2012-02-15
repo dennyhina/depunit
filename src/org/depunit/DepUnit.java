@@ -92,6 +92,7 @@ public class DepUnit
 		out.println("  -x: XML input file that defines a suite of test runs.");
 		out.println("  -c: Test class to include in the run.");
 		out.println("  -t: Only test runs marked with this tag will run.  This can also be a comma seperated list.");
+		out.println("  -d: turns on debug messages");
 		out.println("  target methods: Specific test methods to run.");
 		}
 		
@@ -646,6 +647,7 @@ public class DepUnit
 		for (TestMethod tm : methods)
 			{
 			m_tmBucket.put(tm.getFullName(), tm);
+			System.out.println(tm.getFullName());
 			m_testMethods.add(tm);
 			addToGroupBucket(tm);
 			}

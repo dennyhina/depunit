@@ -99,7 +99,7 @@ public class DepUnitTest
 	}
 
 	
-void depUnitTestMethod(CPMakeRule rule)
+void depUnitTestMethod(Rule rule)
 	{
 	data = rule.getCallBackData();
 	print("Running DepUnit test");
